@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Mode</title>
+    <link rel="stylesheet" href="admin-css/footer.css">
+    <link rel="stylesheet" href="mentor-dashboard/header.css">
+    <style>
+      /* Global Styles */
+      /* Reset and Base Styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #f0f2f5, #dfe9f3);
+        color: #333;
+        line-height: 1.6;
+      }
+
+      /* Header Styles */
+      header {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        transition: all 0.3s ease-in-out;
+      }
+
+      .container {
+        width: 90%;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #1f2937;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .logout-btn {
+        background: linear-gradient(to right, #ff416c, #ff4b2b);
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.2s ease, background 0.3s ease;
+        font-weight: 500;
+      }
+
+      .logout-btn:hover {
+        transform: scale(1.05);
+        background: linear-gradient(to right, #ff4b2b, #ff416c);
+      }
+
+      /* Navigation Tabs */
+      .tabs-container {
+        background-color: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        border-radius: 12px 12px 0 0;
+        margin-top: 1.5rem;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      .tabs {
+        display: flex;
+        flex-wrap: wrap;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+      }
+
+      .tab {
+        padding: 12px 20px;
+        text-decoration: none;
+        color: #374151;
+        font-weight: 500;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        margin: 0 4px;
+      }
+
+      .tab:hover {
+        background: rgba(0, 0, 0, 0.05);
+        transform: translateY(-2px);
+      }
+
+      .tab.active {
+        background: linear-gradient(to right, #4facfe, #00f2fe);
+        color: white;
+        box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
+      }
+
+      /* Main Content */
+      .main-content {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        padding: 2rem;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+        animation: fadeInUp 0.4s ease both;
+      }
+
+      h2 {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        color: #1f2937;
+        font-weight: 600;
+      }
+
+      /* Simulation Controls */
+      .simulation-controls {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(8px);
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+
+      h3 {
+        font-size: 1.25rem;
+        margin-bottom: 1.25rem;
+        color: #1f2937;
+        font-weight: 600;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+        margin-bottom: 1.25rem;
+      }
+
+      @media (min-width: 768px) {
+        .form-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      label {
+        display: block;
+        font-size: 0.875rem;
+        color: #374151;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+
+      select,
+      input[type="date"],
+      input[type="text"] {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        font-size: 0.875rem;
+        background: rgba(255, 255, 255, 0.8);
+        transition: all 0.3s ease;
+      }
+
+      select:focus,
+      input[type="date"]:focus,
+      input[type="text"]:focus {
+        border-color: #4facfe;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2);
+      }
+
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.75rem;
+      }
+
+      .checkbox-group input {
+        margin-right: 0.75rem;
+      }
+
+      .button-group {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+      }
+
+      .btn {
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: none;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary {
+        background: linear-gradient(to right, #4facfe, #00f2fe);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(79, 172, 254, 0.3);
+      }
+
+      .btn-secondary {
+        background: rgba(0, 0, 0, 0.05);
+        color: #374151;
+      }
+
+      .btn-secondary:hover {
+        background: rgba(0, 0, 0, 0.1);
+      }
+
+      /* Simulation Results */
+      .simulation-results {
+        display: none;
+      }
+
+      .results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem;
+        background: rgba(255, 255, 255, 0.6);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 12px 12px 0 0;
+      }
+
+      .results-actions {
+        display: flex;
+        gap: 0.75rem;
+      }
+
+      .btn-success {
+        background: linear-gradient(to right, #43e97b, #38f9d7);
+        color: white;
+      }
+
+      .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(67, 233, 123, 0.3);
+      }
+
+      .btn-purple {
+        background: linear-gradient(to right, #8b5cf6, #7c3aed);
+        color: white;
+      }
+
+      .btn-purple:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(139, 92, 246, 0.3);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: rgba(255, 255, 255, 0.6);
+      }
+
+      th,
+      td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      th {
+        background: rgba(255, 255, 255, 0.8);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: #6b7280;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+
+      .text-green {
+        color: #10b981;
+      }
+
+      .text-red {
+        color: #ef4444;
+      }
+
+      .text-link {
+        color: #3b82f6;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .text-link:hover {
+        color: #2563eb;
+        text-decoration: underline;
+      }
+
+      /* Summary Cards */
+      .summary-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+        margin-bottom: 1.5rem;
+      }
+
+      @media (min-width: 768px) {
+        .summary-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+
+      .summary-card {
+        padding: 1.25rem;
+        border-radius: 12px;
+        border: 1px solid;
+        backdrop-filter: blur(8px);
+        transition: transform 0.3s ease;
+      }
+
+      .summary-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .summary-card h4 {
+        font-size: 0.875rem;
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+      }
+
+      .summary-card p {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+
+      .card-blue {
+        background: rgba(239, 246, 255, 0.7);
+        border-color: rgba(191, 219, 254, 0.5);
+      }
+
+      .card-blue h4 {
+        color: #1e40af;
+      }
+
+      .card-blue p {
+        color: #1d4ed8;
+      }
+
+      .card-green {
+        background: rgba(236, 253, 245, 0.7);
+        border-color: rgba(167, 243, 208, 0.5);
+      }
+
+      .card-green h4 {
+        color: #065f46;
+      }
+
+      .card-green p {
+        color: #059669;
+      }
+
+      .card-purple {
+        background: rgba(245, 243, 255, 0.7);
+        border-color: rgba(221, 214, 254, 0.5);
+      }
+
+      .card-purple h4 {
+        color: #5b21b6;
+      }
+
+      .card-purple p {
+        color: #7c3aed;
+      }
+
+      .card-yellow {
+        background: rgba(254, 252, 232, 0.7);
+        border-color: rgba(254, 240, 138, 0.5);
+      }
+
+      .card-yellow h4 {
+        color: #854d0e;
+      }
+
+      .card-yellow p {
+        color: #ca8a04;
+      }
+
+      /* Alert */
+      .alert {
+        padding: 1rem;
+        border-left: 4px solid #f59e0b;
+        background: rgba(255, 251, 235, 0.7);
+        backdrop-filter: blur(8px);
+        margin-bottom: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        border-radius: 8px;
+      }
+
+      .alert-icon {
+        color: #f59e0b;
+        flex-shrink: 0;
+      }
+
+      .alert-content h3 {
+        font-size: 0.875rem;
+        color: #92400e;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+      }
+
+      .alert-content ul {
+        padding-left: 1.25rem;
+        font-size: 0.875rem;
+        color: #92400e;
+      }
+
+      .alert-content li {
+        margin-bottom: 0.25rem;
+      }
+
+      /* Modal */
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+
+      .modal-content {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(12px);
+        border-radius: 16px;
+        width: 90%;
+        max-width: 900px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        animation: modalFadeIn 0.3s ease-out;
+      }
+
+      @keyframes modalFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .modal-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+
+      .modal-title {
+        font-size: 1.25rem;
+        color: #1f2937;
+        font-weight: 600;
+      }
+
+      .modal-subtitle {
+        font-size: 0.875rem;
+        color: #6b7280;
+      }
+
+      .close-btn {
+        background: none;
+        border: none;
+        color: #9ca3af;
+        cursor: pointer;
+        font-size: 1.5rem;
+        transition: color 0.2s ease;
+      }
+
+      .close-btn:hover {
+        color: #6b7280;
+      }
+
+      .modal-body {
+        padding: 1.5rem;
+      }
+
+      .modal-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      @media (min-width: 768px) {
+        .modal-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      .modal-section h4 {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        color: #1f2937;
+        font-weight: 600;
+      }
+
+      .breakdown-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        font-size: 0.875rem;
+      }
+
+      .breakdown-total {
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        padding-top: 0.75rem;
+        font-weight: 600;
+      }
+
+      .session-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .session-table th,
+      .session-table td {
+        padding: 0.75rem;
+        font-size: 0.75rem;
+      }
+
+      .session-table th {
+        background: rgba(255, 255, 255, 0.8);
+        color: #6b7280;
+        font-weight: 600;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+
+      .status-completed {
+        background-color: #dcfce7;
+        color: #166534;
+      }
+
+      .status-pending {
+        background-color: #fef9c3;
+        color: #854d0e;
+      }
+
+      .status-cancelled {
+        background-color: #fee2e2;
+        color: #991b1b;
+      }
+
+      .notes-section {
+        margin-top: 1.5rem;
+      }
+
+      .notes-content {
+        background: rgba(249, 250, 251, 0.7);
+        padding: 1rem;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        line-height: 1.5;
+      }
+
+      .modal-footer {
+        padding: 1.25rem;
+        background: rgba(249, 250, 251, 0.7);
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        border-radius: 0 0 16px 16px;
+      }
+
+      /* Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Utility Classes */
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <header class="etm-header">
+      <div class="etm-header-container">
+        <div class="etm-header-content">
+          <div class="etm-logo">EdTech Mentor Dashboard</div>
+          <div class="etm-user-info">
+            <span>Welcome, <span id="etm-mentor-name">Mentor</span>!</span>
+            <div class="etm-notification-tooltip">
+              <i class="fas fa-bell" style="font-size: 1.2rem; margin-right: 1rem;"></i>
+              <span class="etm-notification-badge pulse">3</span>
+            </div>
+            <button onclick="logout()" class="etm-logout-btn">Logout</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Admin Navigation Tabs -->
+    <div class="container tabs-container">
+      <div class="tabs">
+        <a href="session_management.html" class="tab">Session Management</a>
+        <a href="payout_configuration.html" class="tab">Payout Configuration</a>
+        <a href="receipt_generation.html" class="tab">Receipt Generation</a>
+        <a href="admin-chat.html" class="tab">Mentor Communication</a>
+        <a href="audit-logs.html" class="tab">Audit Trails</a>
+        <a href="test-mode.html" class="tab active">Test Mode</a>
+        <a href="data-export.html" class="tab">Data Export & Integration</a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container main-content">
+      <h2>Payout Simulation & Test Mode</h2>
+
+      <!-- Simulation Controls -->
+      <div class="simulation-controls">
+        <h3>Run Payout Simulation</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="payout-period">Payout Period</label>
+            <select id="payout-period">
+              <option value="">Select a period</option>
+              <option value="current">Current Month (November 2023)</option>
+              <option value="previous">Previous Month (October 2023)</option>
+              <option value="custom">Custom Range</option>
+            </select>
+          </div>
+          <div
+            id="custom-range-fields"
+            class="hidden"
+            style="
+              grid-column: span 2;
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 1rem;
+            "
+          >
+            <div class="form-group">
+              <label>Start Date</label>
+              <input type="date" />
+            </div>
+            <div class="form-group">
+              <label>End Date</label>
+              <input type="date" />
+            </div>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="mentor-filter">Mentor Filter</label>
+            <select id="mentor-filter">
+              <option value="all">All Mentors</option>
+              <option value="active">Active Mentors Only</option>
+              <option value="specific">Specific Mentor</option>
+            </select>
+          </div>
+          <div id="specific-mentor-field" class="hidden">
+            <label>Mentor Name/ID</label>
+            <input type="text" placeholder="Enter mentor name or ID" />
+          </div>
+        </div>
+        <div class="checkbox-group">
+          <input id="include-bonuses" type="checkbox" checked />
+          <label for="include-bonuses">Include bonuses and incentives</label>
+        </div>
+        <div class="checkbox-group">
+          <input id="apply-overrides" type="checkbox" />
+          <label for="apply-overrides">Apply manual overrides</label>
+        </div>
+        <div class="button-group">
+          <button class="btn btn-primary" onclick="runSimulation()">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            Run Simulation
+          </button>
+          <button class="btn btn-secondary" onclick="resetSimulation()">
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- Simulation Results -->
+      <div id="simulation-results" class="simulation-results">
+        <div class="results-container">
+          <div class="results-header">
+            <h3>Simulation Results</h3>
+            <div class="results-actions">
+              <button
+                class="btn btn-success"
+                onclick="exportSimulationResults()"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                Export Results
+              </button>
+              <button class="btn btn-purple" onclick="approveForPayout()">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                Approve for Payout
+              </button>
+            </div>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Mentor</th>
+                  <th>Sessions</th>
+                  <th>Base Amount</th>
+                  <th>Bonuses</th>
+                  <th>Deductions</th>
+                  <th>Platform Fee</th>
+                  <th>Total Payout</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="simulation-results-body">
+                <!-- Sample simulation results -->
+                <tr>
+                  <td>
+                    <div style="display: flex; align-items: center">
+                      <img
+                        src="https://via.placeholder.com/40"
+                        alt=""
+                        style="
+                          width: 40px;
+                          height: 40px;
+                          border-radius: 50%;
+                          margin-right: 1rem;
+                        "
+                      />
+                      <div>
+                        <div>John Doe</div>
+                        <div style="font-size: 0.75rem; color: #6b7280">
+                          M00123
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div>12</div>
+                    <div style="font-size: 0.75rem; color: #6b7280">
+                      (24 hours)
+                    </div>
+                  </td>
+                  <td>$1,200.00</td>
+                  <td class="text-green">+$150.00</td>
+                  <td class="text-red">-$25.00</td>
+                  <td>-$120.00 (10%)</td>
+                  <td style="font-weight: 500">$1,205.00</td>
+                  <td>
+                    <span
+                      class="text-link"
+                      onclick="viewMentorDetails('M00123')"
+                      >Details</span
+                    >
+                    <span class="text-link" onclick="adjustPayout('M00123')"
+                      >Adjust</span
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div style="display: flex; align-items: center">
+                      <img
+                        src="https://via.placeholder.com/40"
+                        alt=""
+                        style="
+                          width: 40px;
+                          height: 40px;
+                          border-radius: 50%;
+                          margin-right: 1rem;
+                        "
+                      />
+                      <div>
+                        <div>Jane Smith</div>
+                        <div style="font-size: 0.75rem; color: #6b7280">
+                          M00124
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div>8</div>
+                    <div style="font-size: 0.75rem; color: #6b7280">
+                      (16 hours)
+                    </div>
+                  </td>
+                  <td>$800.00</td>
+                  <td class="text-green">+$50.00</td>
+                  <td class="text-red">-$0.00</td>
+                  <td>-$80.00 (10%)</td>
+                  <td style="font-weight: 500">$770.00</td>
+                  <td>
+                    <span
+                      class="text-link"
+                      onclick="viewMentorDetails('M00124')"
+                      >Details</span
+                    >
+                    <span class="text-link" onclick="adjustPayout('M00124')"
+                      >Adjust</span
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div style="display: flex; align-items: center">
+                      <img
+                        src="https://via.placeholder.com/40"
+                        alt=""
+                        style="
+                          width: 40px;
+                          height: 40px;
+                          border-radius: 50%;
+                          margin-right: 1rem;
+                        "
+                      />
+                      <div>
+                        <div>Robert Johnson</div>
+                        <div style="font-size: 0.75rem; color: #6b7280">
+                          M00125
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div>15</div>
+                    <div style="font-size: 0.75rem; color: #6b7280">
+                      (30 hours)
+                    </div>
+                  </td>
+                  <td>$1,500.00</td>
+                  <td class="text-green">+$200.00</td>
+                  <td class="text-red">-$75.00</td>
+                  <td>-$150.00 (10%)</td>
+                  <td style="font-weight: 500">$1,475.00</td>
+                  <td>
+                    <span
+                      class="text-link"
+                      onclick="viewMentorDetails('M00125')"
+                      >Details</span
+                    >
+                    <span class="text-link" onclick="adjustPayout('M00125')"
+                      >Adjust</span
+                    >
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Summary Card -->
+        <div class="summary-grid">
+          <div class="summary-card card-blue">
+            <h4>Total Mentors</h4>
+            <p>3</p>
+          </div>
+          <div class="summary-card card-green">
+            <h4>Total Sessions</h4>
+            <p>35</p>
+          </div>
+          <div class="summary-card card-purple">
+            <h4>Total Payout</h4>
+            <p>$3,450.00</p>
+          </div>
+          <div class="summary-card card-yellow">
+            <h4>Platform Fees</h4>
+            <p>$350.00</p>
+          </div>
+        </div>
+
+        <!-- Potential Issues Alert -->
+        <div class="alert">
+          <div class="alert-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </div>
+          <div class="alert-content">
+            <h3>Potential issues detected</h3>
+            <ul>
+              <li>1 mentor has sessions with incomplete feedback</li>
+              <li>2 sessions exceed standard duration (flagged for review)</li>
+              <li>
+                Platform fee calculation differs for 1 mentor (manual override
+                applied)
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mentor Details Modal -->
+      <div id="mentor-details-modal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div>
+              <h3 class="modal-title">Mentor Payout Details</h3>
+              <p class="modal-subtitle" id="mentor-id">M00123 - John Doe</p>
+            </div>
+            <button class="close-btn" onclick="closeMentorModal()">
+              &times;
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="modal-grid">
+              <!-- Payout Breakdown -->
+              <div class="modal-section">
+                <h4>Payout Breakdown</h4>
+                <div class="breakdown-item">
+                  <span>Base Sessions (12 @ $100)</span>
+                  <span>$1,200.00</span>
+                </div>
+                <div class="breakdown-item">
+                  <span>Completion Bonus</span>
+                  <span class="text-green">+$100.00</span>
+                </div>
+                <div class="breakdown-item">
+                  <span>Performance Bonus</span>
+                  <span class="text-green">+$50.00</span>
+                </div>
+                <div class="breakdown-item">
+                  <span>Late Cancellation</span>
+                  <span class="text-red">-$25.00</span>
+                </div>
+                <div class="breakdown-item breakdown-total">
+                  <span>Subtotal</span>
+                  <span>$1,325.00</span>
+                </div>
+                <div class="breakdown-item">
+                  <span>Platform Fee (10%)</span>
+                  <span class="text-red">-$120.00</span>
+                </div>
+                <div class="breakdown-item breakdown-total">
+                  <span>Total Payout</span>
+                  <span>$1,205.00</span>
+                </div>
+              </div>
+
+              <!-- Session Details -->
+              <div class="modal-section">
+                <h4>Session Details</h4>
+                <div style="max-height: 300px; overflow-y: auto">
+                  <table class="session-table">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Duration</th>
+                        <th>Rate</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Nov 15, 2023</td>
+                        <td>2 hours</td>
+                        <td>$100</td>
+                        <td>
+                          <span class="status-badge status-completed"
+                            >Completed</span
+                          >
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Nov 14, 2023</td>
+                        <td>2 hours</td>
+                        <td>$100</td>
+                        <td>
+                          <span class="status-badge status-completed"
+                            >Completed</span
+                          >
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Nov 12, 2023</td>
+                        <td>2 hours</td>
+                        <td>$100</td>
+                        <td>
+                          <span class="status-badge status-pending"
+                            >Pending Feedback</span
+                          >
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Nov 10, 2023</td>
+                        <td>3 hours</td>
+                        <td>$150</td>
+                        <td>
+                          <span class="status-badge status-cancelled"
+                            >Late Cancel</span
+                          >
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notes Section -->
+            <div class="notes-section">
+              <h4>Notes & Adjustments</h4>
+              <div class="notes-content">
+                <p>
+                  • Manual override applied to platform fee (reduced from 15% to
+                  10% for promotional period)
+                </p>
+                <p>
+                  • One session marked as late cancellation due to student
+                  no-show
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-purple" onclick="adjustPayoutFromModal()">
+              Adjust Payout
+            </button>
+            <button class="btn btn-secondary" onclick="closeMentorModal()">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <footer class="button-footer">
+      <div class="footer-container">
+        <div class="button-group">
+          <button class="nav-btn prev-btn" onclick="goPrevious()">
+            ← Previous Page
+          </button>
+  
+          <button class="nav-btn home-btn" onclick="goHome()">🏠 Home</button>
+  
+          <button class="nav-btn next-btn" onclick="goNext()">
+            Next Page →
+          </button>
+        </div>
+  
+        <div class="footer-info">
+          
+        </div>
+      </div>
+    </footer>
+  
+    <script>
+      function goPrevious() {
+        window.location.href = "audit-logs.html";
+      }
+      function goHome() {
+        window.location.href = "session_management.html";
+      }
+      function goNext() {
+        window.location.href = "data-export.html";
+      }
+    </script>
+    <script>
+      // Simple script to handle UI interactions
+      document
+        .getElementById("payout-period")
+        .addEventListener("change", function (e) {
+          if (e.target.value === "custom") {
+            document
+              .getElementById("custom-range-fields")
+              .classList.remove("hidden");
+          } else {
+            document
+              .getElementById("custom-range-fields")
+              .classList.add("hidden");
+          }
+        });
+
+      document
+        .getElementById("mentor-filter")
+        .addEventListener("change", function (e) {
+          if (e.target.value === "specific") {
+            document
+              .getElementById("specific-mentor-field")
+              .classList.remove("hidden");
+          } else {
+            document
+              .getElementById("specific-mentor-field")
+              .classList.add("hidden");
+          }
+        });
+
+      function runSimulation() {
+        document
+          .getElementById("simulation-results")
+          .classList.remove("hidden");
+        // In a real app, this would call an API to get simulation results
+      }
+
+      function resetSimulation() {
+        document.getElementById("simulation-results").classList.add("hidden");
+        document.getElementById("payout-period").value = "";
+        document.getElementById("mentor-filter").value = "all";
+        document.getElementById("include-bonuses").checked = true;
+        document.getElementById("apply-overrides").checked = false;
+        document.getElementById("custom-range-fields").classList.add("hidden");
+        document
+          .getElementById("specific-mentor-field")
+          .classList.add("hidden");
+      }
+
+      function viewMentorDetails(mentorId) {
+        document.getElementById("mentor-details-modal").style.display = "flex";
+        // In a real app, this would load data specific to the mentorId
+      }
+
+      function closeMentorModal() {
+        document.getElementById("mentor-details-modal").style.display = "none";
+      }
+
+      function adjustPayout(mentorId) {
+        alert(`Adjust payout for mentor ${mentorId}`);
+        // In a real app, this would open an adjustment interface
+      }
+
+      function adjustPayoutFromModal() {
+        alert("Adjust payout from modal");
+        // In a real app, this would handle the adjustment
+      }
+
+      function exportSimulationResults() {
+        alert("Exporting simulation results to CSV");
+        // In a real app, this would generate and download a CSV file
+      }
+
+      function approveForPayout() {
+        if (
+          confirm(
+            "Are you sure you want to approve these payouts? This will initiate actual payments to mentors."
+          )
+        ) {
+          alert("Payouts approved and queued for processing");
+          // In a real app, this would initiate the actual payout process
+        }
+      }
+
+      function logout() {
+        // Logout functionality
+        window.location.href = "index.html";
+      }
+    </script>
+  </body>
+</html>
