@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EdTech Payout System - Session Management</title>
+    <link rel="stylesheet" href="admin-css/footer.css" />
+    <!-- Add Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="mentor-dashboard/header.css">
+    <style>
+      /* Reset and Base Styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        transition: all 0.3s ease-in-out;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f7fa 100%);
+        color: #1e293b;
+        line-height: 1.6;
+      }
+
+      .container {
+        width: 90%;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* Navigation Bar */
+      header {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #1f2937;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .logout-btn {
+        background: linear-gradient(to right, #ff416c, #ff4b2b);
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.2s ease, background 0.3s ease;
+        font-weight: 500;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .logout-btn:hover {
+        transform: scale(1.05);
+        background: linear-gradient(to right, #ff4b2b, #ff416c);
+      }
+
+      .logout-btn::after {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          120deg,
+          rgba(255, 255, 255, 0.4) 0%,
+          rgba(255, 255, 255, 0.1) 40%,
+          transparent 80%
+        );
+        transform: rotate(30deg);
+        animation: sheen 3s infinite;
+      }
+
+      @keyframes sheen {
+        0% {
+          left: -75%;
+        }
+        100% {
+          left: 125%;
+        }
+      }
+
+      /* Navigation Tabs */
+      /* Center the tabs container */
+      /* 1. Remove heavy filters - use solid colors instead */
+      /* Navigation Tabs - Optimized */
+      /* Navigation Tabs - Performance Optimized but with Visual Effects Preserved */
+      .tabs-container {
+        width: 90%;
+        max-width: 1200px;
+        margin: 1.5rem auto 0;
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 12px 12px 0 0;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Performance-friendly blur alternative */
+      .tabs-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: inherit;
+        z-index: -1;
+      }
+
+      .tabs {
+        display: flex;
+        flex-wrap: wrap;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+        padding: 0 4px;
+      }
+
+      .tab {
+        padding: 12px 20px;
+        text-decoration: none;
+        color: #374151;
+        font-weight: 500;
+        border-radius: 8px;
+        transition: transform 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28),
+          background 0.3s ease, box-shadow 0.3s ease;
+        margin: 0 4px;
+        position: relative;
+        overflow: hidden;
+        will-change: transform; /* Optimize for animation */
+      }
+
+      /* Hover effect with optimized performance */
+      .tab:hover {
+        background: rgba(0, 0, 0, 0.05);
+        transform: translateY(-2px);
+      }
+
+      /* Active tab with optimized gradient */
+      .tab.active {
+        color: white;
+        box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
+        position: relative;
+      }
+
+      /* Gradient background with hardware acceleration */
+      .tab.active::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+        z-index: -1;
+        border-radius: 8px;
+      }
+
+      /* Sheen effect for active tab */
+      .tab.active::after {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          to bottom right,
+          rgba(255, 255, 255, 0.3) 0%,
+          rgba(255, 255, 255, 0) 60%
+        );
+        transform: rotate(30deg);
+        animation: tabSheen 3s infinite;
+        z-index: -1;
+      }
+
+      @keyframes tabSheen {
+        0% {
+          left: -100%;
+        }
+        100% {
+          left: 100%;
+        }
+      }
+      /* Main Content */
+      .main-content {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        padding: 2rem;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+        animation: fadeInUp 0.4s ease both;
+      }
+
+      h2 {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        color: #1f2937;
+        font-weight: 600;
+      }
+
+      /* Simulation Controls */
+      .simulation-controls {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(8px);
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+
+      h3 {
+        font-size: 1.25rem;
+        margin-bottom: 1.25rem;
+        color: #1f2937;
+        font-weight: 600;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+        margin-bottom: 1.25rem;
+      }
+
+      @media (min-width: 768px) {
+        .form-grid {
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      label {
+        display: block;
+        font-size: 0.875rem;
+        color: #374151;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+
+      select,
+      input[type="date"],
+      input[type="text"],
+      input[type="number"] {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        font-size: 0.875rem;
+        background: rgba(255, 255, 255, 0.8);
+        transition: all 0.3s ease;
+      }
+
+      select:focus,
+      input[type="date"]:focus,
+      input[type="text"]:focus,
+      input[type="number"]:focus {
+        border-color: #4facfe;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2);
+      }
+
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.75rem;
+      }
+
+      .checkbox-group input {
+        margin-right: 0.75rem;
+      }
+
+      .button-group,
+      .results-actions,
+      .modal-footer {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: flex-end;
+        align-items: center;
+      }
+
+      .btn {
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: none;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary {
+        background: linear-gradient(to right, #4facfe, #00f2fe);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(79, 172, 254, 0.3);
+      }
+
+      .btn-secondary {
+        background: rgba(0, 0, 0, 0.05);
+        color: #374151;
+      }
+
+      .btn-secondary:hover {
+        background: rgba(0, 0, 0, 0.1);
+      }
+
+      /* Simulation Results */
+      .simulation-results {
+        display: none;
+      }
+
+      .results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem;
+        background: rgba(255, 255, 255, 0.6);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 12px 12px 0 0;
+      }
+
+      .results-actions {
+        display: flex;
+        gap: 0.75rem;
+      }
+
+      .btn-success {
+        background: linear-gradient(to right, #43e97b, #38f9d7);
+        color: white;
+      }
+
+      .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(67, 233, 123, 0.3);
+      }
+
+      .btn-purple {
+        background: linear-gradient(to right, #8b5cf6, #7c3aed);
+        color: white;
+      }
+
+      .btn-purple:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(139, 92, 246, 0.3);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: rgba(255, 255, 255, 0.6);
+      }
+
+      th,
+      td {
+        padding: 1rem;
+        text-align: left;
+        vertical-align: middle; /* Add this */
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      th {
+        background: rgba(255, 255, 255, 0.8);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: #6b7280;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+
+      .text-green {
+        color: #10b981;
+      }
+
+      .text-red {
+        color: #ef4444;
+      }
+
+      .text-link {
+        color: #3b82f6;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .text-link:hover {
+        color: #2563eb;
+        text-decoration: underline;
+      }
+
+      /* Summary Cards */
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.25rem;
+        margin-bottom: 1.5rem;
+      }
+
+      @media (min-width: 768px) {
+        .summary-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+
+      .summary-card {
+        padding: 1.25rem;
+        border-radius: 12px;
+        border: 1px solid;
+        backdrop-filter: blur(8px);
+        transition: transform 0.3s ease;
+      }
+
+      .summary-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .summary-card h4 {
+        font-size: 0.875rem;
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+      }
+
+      .summary-card p {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+
+      .card-blue {
+        background: rgba(239, 246, 255, 0.7);
+        border-color: rgba(191, 219, 254, 0.5);
+      }
+
+      .card-blue h4 {
+        color: #1e40af;
+      }
+
+      .card-blue p {
+        color: #1d4ed8;
+      }
+
+      .card-green {
+        background: rgba(236, 253, 245, 0.7);
+        border-color: rgba(167, 243, 208, 0.5);
+      }
+
+      .card-green h4 {
+        color: #065f46;
+      }
+
+      .card-green p {
+        color: #059669;
+      }
+
+      .card-purple {
+        background: rgba(245, 243, 255, 0.7);
+        border-color: rgba(221, 214, 254, 0.5);
+      }
+
+      .card-purple h4 {
+        color: #5b21b6;
+      }
+
+      .card-purple p {
+        color: #7c3aed;
+      }
+
+      .card-yellow {
+        background: rgba(254, 252, 232, 0.7);
+        border-color: rgba(254, 240, 138, 0.5);
+      }
+
+      .card-yellow h4 {
+        color: #854d0e;
+      }
+
+      .card-yellow p {
+        color: #ca8a04;
+      }
+
+      /* Alert */
+      .alert {
+        padding: 1rem;
+        border-left: 4px solid #f59e0b;
+        background: rgba(255, 251, 235, 0.7);
+        backdrop-filter: blur(8px);
+        margin-bottom: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        border-radius: 8px;
+      }
+
+      .alert-icon {
+        color: #f59e0b;
+        flex-shrink: 0;
+      }
+
+      .alert-content h3 {
+        font-size: 0.875rem;
+        color: #92400e;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+      }
+
+      .alert-content ul {
+        padding-left: 1.25rem;
+        font-size: 0.875rem;
+        color: #92400e;
+      }
+
+      .alert-content li {
+        margin-bottom: 0.25rem;
+      }
+
+      /* Modal */
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+
+      .modal-content {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(12px);
+        border-radius: 16px;
+        width: 90%;
+        max-width: 900px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        animation: modalFadeIn 0.3s ease-out;
+      }
+
+      @keyframes modalFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .modal-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+
+      .modal-title {
+        font-size: 1.25rem;
+        color: #1f2937;
+        font-weight: 600;
+      }
+
+      .modal-subtitle {
+        font-size: 0.875rem;
+        color: #6b7280;
+      }
+
+      .close-btn {
+        background: none;
+        border: none;
+        color: #9ca3af;
+        cursor: pointer;
+        font-size: 1.5rem;
+        transition: color 0.2s ease;
+      }
+
+      .close-btn:hover {
+        color: #6b7280;
+      }
+
+      .modal-body {
+        padding: 1.5rem;
+      }
+
+      .modal-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      @media (min-width: 768px) {
+        .modal-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      .modal-section {
+        margin-bottom: 1.5rem;
+      }
+
+      .breakdown-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+      }
+
+      .breakdown-total {
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        padding-top: 0.75rem;
+        font-weight: 600;
+      }
+
+      .session-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .session-table th,
+      .session-table td {
+        padding: 0.75rem;
+        font-size: 0.75rem;
+      }
+
+      .session-table th {
+        background: rgba(255, 255, 255, 0.8);
+        color: #6b7280;
+        font-weight: 600;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+
+      .status-completed {
+        background-color: #dcfce7;
+        color: #166534;
+      }
+
+      .status-pending {
+        background-color: #fef9c3;
+        color: #854d0e;
+      }
+
+      .status-cancelled {
+        background-color: #fee2e2;
+        color: #991b1b;
+      }
+
+      .notes-section {
+        margin-top: 1.5rem;
+      }
+
+      .notes-content {
+        background: rgba(249, 250, 251, 0.7);
+        padding: 1rem;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        line-height: 1.5;
+      }
+
+      .modal-footer {
+        padding: 1.25rem;
+        background: rgba(249, 250, 251, 0.7);
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        border-radius: 0 0 16px 16px;
+      }
+
+      /* Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Utility Classes */
+      .hidden {
+        display: none;
+      }
+
+      /* Add this to your CSS */
+      .flex {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .flex-grow {
+        flex-grow: 1;
+      }
+
+      .items-center {
+        align-items: center;
+      }
+
+      .justify-between {
+        justify-content: space-between;
+      }
+
+      .gap-1 {
+        gap: 0.25rem;
+      }
+
+      .gap-2 {
+        gap: 0.5rem;
+      }
+
+      .gap-4 {
+        gap: 1rem;
+      }
+
+      .mb-2 {
+        margin-bottom: 0.5rem;
+      }
+
+      .mb-4 {
+        margin-bottom: 1rem;
+      }
+
+      .mb-6 {
+        margin-bottom: 1.5rem;
+      }
+
+      .mt-2 {
+        margin-top: 0.5rem;
+      }
+
+      .mt-4 {
+        margin-top: 1rem;
+      }
+
+      .p-2 {
+        padding: 0.5rem;
+      }
+
+      .p-4 {
+        padding: 1rem;
+      }
+
+      .p-6 {
+        padding: 1.5rem;
+      }
+
+      .rounded {
+        border-radius: 0.25rem;
+      }
+
+      .rounded-md {
+        border-radius: 0.375rem;
+      }
+
+      .rounded-lg {
+        border-radius: 0.5rem;
+      }
+
+      .text-sm {
+        font-size: 0.875rem;
+      }
+
+      .text-base {
+        font-size: 1rem;
+      }
+
+      .text-lg {
+        font-size: 1.125rem;
+      }
+
+      .text-xl {
+        font-size: 1.25rem;
+      }
+
+      .text-2xl {
+        font-size: 1.5rem;
+      }
+
+      .font-medium {
+        font-weight: 500;
+      }
+
+      .font-semibold {
+        font-weight: 600;
+      }
+
+      .font-bold {
+        font-weight: 700;
+      }
+
+      .w-full {
+        width: 100%;
+      }
+
+      .flex-grow {
+        flex-grow: 1;
+      }
+      /* Improved Form Grid */
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+        margin-bottom: 1.25rem;
+      }
+
+      @media (min-width: 768px) {
+        .form-grid {
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+      }
+
+      /* Better Flex Utilities */
+      .flex {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .flex-col {
+        flex-direction: column;
+      }
+
+      .flex-grow {
+        flex-grow: 1;
+      }
+
+      /* Improved Table Alignment */
+      th,
+      td {
+        vertical-align: middle;
+      }
+
+      /* Better Button Groups */
+      .button-group,
+      .results-actions,
+      .modal-footer {
+        align-items: center;
+      }
+
+      /* Custom Date Range Improvements */
+      #custom-range-fields {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      @media (min-width: 768px) {
+        #custom-range-fields {
+          grid-template-columns: repeat(3, 1fr);
+          align-items: end;
+        }
+      }
+
+      /* Better Summary Cards */
+      .summary-card h4 {
+        min-height: 2.5rem; /* Ensures consistent height for titles */
+      }
+
+      /* Form Group Consistency */
+      .form-group {
+        margin-bottom: 1rem;
+        width: 100%;
+      }
+
+      /* Visualization Cards */
+      .visualization-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(8px);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease;
+      }
+
+      .visualization-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .visualization-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .visualization-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1f2937;
+      }
+
+      .chart-container {
+        position: relative;
+        height: 250px;
+        width: 100%;
+      }
+
+      /* Mini stats cards */
+      .mini-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .mini-stat-card {
+        background: rgba(255, 255, 255, 0.8);
+        padding: 0.75rem;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      }
+
+      .mini-stat-value {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #1f2937;
+      }
+
+      .mini-stat-label {
+        font-size: 0.7rem;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      /* Pulse animation for real-time updates */
+      @keyframes pulseHighlight {
+        0% {
+          background-color: rgba(79, 172, 254, 0);
+        }
+        50% {
+          background-color: rgba(79, 172, 254, 0.1);
+        }
+        100% {
+          background-color: rgba(79, 172, 254, 0);
+        }
+      }
+
+      .pulse-update {
+        animation: pulseHighlight 1.5s ease;
+      }
+
+      /* Session type tags */
+      .session-tag {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+
+      .tag-regular {
+        background: #e0f2fe;
+        color: #0369a1;
+      }
+      .tag-workshop {
+        background: #fce7f3;
+        color: #9d174d;
+      }
+      .tag-1on1 {
+        background: #dcfce7;
+        color: #166534;
+      }
+      .tag-group {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      /* Visualization Cards */
+      .visualization-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(8px);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease;
+      }
+
+      .visualization-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .visualization-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .visualization-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1f2937;
+      }
+
+      .chart-container {
+        position: relative;
+        height: 250px;
+        width: 100%;
+      }
+
+      /* Ensure canvas is properly sized */
+      .chart-container canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+
+      /* Mini stats cards */
+      .mini-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .mini-stat-card {
+        background: rgba(255, 255, 255, 0.8);
+        padding: 0.75rem;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      }
+
+      .mini-stat-value {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #1f2937;
+      }
+
+      .mini-stat-label {
+        font-size: 0.7rem;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      /* Pulse animation for real-time updates */
+      @keyframes pulseHighlight {
+        0% {
+          background-color: rgba(79, 172, 254, 0);
+        }
+        50% {
+          background-color: rgba(79, 172, 254, 0.1);
+        }
+        100% {
+          background-color: rgba(79, 172, 254, 0);
+        }
+      }
+
+      .pulse-update {
+        animation: pulseHighlight 1.5s ease;
+      }
+
+      /* Session type tags */
+      .session-tag {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+
+      .tag-regular {
+        background: #e0f2fe;
+        color: #0369a1;
+      }
+      .tag-workshop {
+        background: #fce7f3;
+        color: #9d174d;
+      }
+      .tag-1on1 {
+        background: #dcfce7;
+        color: #166534;
+      }
+      .tag-group {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .pdf-preview {
+        width: 100%;
+        height: 300px;
+        border: 1px dashed #ccc;
+        margin-top: 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.7);
+      }
+
+      .file-info {
+        margin-top: 0.5rem;
+        font-size: 0.8rem;
+        color: #666;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .pdf-preview iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+
+      .pdf-preview p {
+        color: #999;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Navigation Bar -->
+    <header class="etm-header">
+      <div class="etm-header-container">
+        <div class="etm-header-content">
+          <div class="etm-logo">EdTech Mentor Dashboard</div>
+          <div class="etm-user-info">
+            <span>Welcome, <span id="etm-mentor-name">Mentor</span>!</span>
+            <div class="etm-notification-tooltip">
+              <i class="fas fa-bell" style="font-size: 1.2rem; margin-right: 1rem;"></i>
+              <span class="etm-notification-badge pulse">3</span>
+            </div>
+            <button onclick="logout()" class="etm-logout-btn">Logout</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Admin Navigation Tabs -->
+    <div class="tabs-container">
+      <div class="tabs">
+        <a href="session_management.html" class="tab active"
+          >Session Management</a
+        >
+        <a href="payout_configuration.html" class="tab">Payout Configuration</a>
+        <a href="receipt_generation.html" class="tab">Receipt Generation</a>
+        <a href="admin-chat.html" class="tab">Mentor Communication</a>
+        <a href="audit-logs.html" class="tab">Audit Trails</a>
+        <a href="test-mode.html" class="tab">Test Mode</a>
+        <a href="data-export.html" class="tab">Data Export & Integration</a>
+      </div>
+    </div>
+
+    <!-- Session Management Content -->
+    <div class="main-content container">
+      <h2>Session Management</h2>
+
+      <!-- Summary Cards -->
+      <div class="summary-grid">
+        <div class="summary-card card-blue">
+          <h4>Total Sessions</h4>
+          <p id="total-sessions">0</p>
+        </div>
+        <div class="summary-card card-green">
+          <h4>Total Payout</h4>
+          <p id="total-payout">$0.00</p>
+        </div>
+        <div class="summary-card card-purple">
+          <h4>Filter Sessions</h4>
+          <div class="form-group">
+            <div class="flex">
+              <select id="date-range" class="flex-grow rounded-md">
+                <option value="">All</option>
+                <option value="7">Last 7 days</option>
+                <option value="15">Last 15 days</option>
+                <option value="30">Last 30 days</option>
+                <option value="custom">Custom range</option>
+              </select>
+              <button id="filter-sessions" class="btn btn-primary rounded-md">
+                Filter
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Custom Date Range (hidden by default) -->
+      <div id="custom-range-fields" class="hidden form-grid">
+        <div class="form-group">
+          <label>Start Date</label>
+          <input type="date" id="custom-start" />
+        </div>
+        <div class="form-group">
+          <label>End Date</label>
+          <input type="date" id="custom-end" />
+        </div>
+        <div class="form-group flex items-end">
+          <button onclick="filterSessions()" class="btn btn-primary">
+            Apply Custom Range
+          </button>
+        </div>
+      </div>
+
+      <!-- Session Entry Forms -->
+      <div class="simulation-controls">
+        <div class="form-grid">
+          <!-- Manual Entry Form -->
+          <div>
+            <h3>Add Session Manually</h3>
+            <form
+              id="add-session-form"
+              onsubmit="event.preventDefault(); addSession();"
+            >
+              <div class="form-grid mb-4">
+                <div class="form-group">
+                  <label>Mentor ID</label>
+                  <input type="text" id="mentor-id" required />
+                </div>
+                <div class="form-group">
+                  <label>Session Date</label>
+                  <input type="date" id="session-date" required />
+                </div>
+                <div class="form-group">
+                  <label>Session Type</label>
+                  <select id="session-type">
+                    <option value="Regular">Regular</option>
+                    <option value="Workshop">Workshop</option>
+                    <option value="1-on-1">1-on-1</option>
+                    <option value="Group">Group</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Duration (hours)</label>
+                  <input
+                    type="number"
+                    id="session-duration"
+                    step="0.5"
+                    min="0.5"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Rate per hour ($)</label>
+                  <input
+                    type="number"
+                    id="session-rate"
+                    min="0"
+                    step="1"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="button-group">
+                <button type="submit" class="btn btn-primary">
+                  Add Session
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Bulk Upload -->
+          <div>
+            <h3>Bulk Upload Sessions</h3>
+            <div class="form-group mb-4">
+              <label>Upload PDF File</label>
+              <input
+                type="file"
+                id="session-upload"
+                accept=".pdf"
+                class="w-full"
+              />
+            </div>
+            <div id="pdf-preview-container" class="hidden">
+              <h4>Uploaded PDF Preview</h4>
+              <div id="pdf-preview" class="pdf-preview">
+                <p>PDF preview will appear here</p>
+              </div>
+              <div class="file-info">
+                <span id="file-name"></span>
+                <span id="file-size"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sessions Table -->
+      <div class="simulation-results" id="sessions-table">
+        <div class="results-header">
+          <h3>Sessions</h3>
+          <div class="results-actions">
+            <button class="btn btn-success">Export</button>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Mentor</th>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Duration</th>
+              <th>Rate</th>
+              <th>Payout</th>
+              <th>Breakdown</th>
+            </tr>
+          </thead>
+          <tbody id="sessions-table-body">
+            <!-- Sessions will be inserted here by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Breakdown Modal -->
+    <div id="breakdown-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <div class="modal-title">Payout Breakdown</div>
+          </div>
+          <button onclick="closeBreakdownModal()" class="close-btn">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div id="breakdown-modal-content">
+            <!-- Content will be loaded here -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button onclick="closeBreakdownModal()" class="btn btn-secondary">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- footer -->
+    <footer class="button-footer">
+      <div class="footer-container">
+        <div class="button-group">
+          <button class="nav-btn prev-btn" onclick="goPrevious()" disabled>
+            ← Previous Page
+          </button>
+
+          <button class="nav-btn home-btn" onclick="goHome()">🏠 Home</button>
+
+          <button class="nav-btn next-btn" onclick="goNext()">
+            Next Page →
+          </button>
+        </div>
+
+        <div class="footer-info"></div>
+      </div>
+    </footer>
+
+    <script>
+      function goPrevious() {
+        window.location.href = "session_management.html";
+      }
+      function goHome() {
+        window.location.href = "session_management.html";
+      }
+      function goNext() {
+        window.location.href = "payout_configuration.html";
+      }
+    </script>
+    <script>
+      // Global sessions array
+      let sessions = [];
+
+      // Session Management Functions
+      function addSession() {
+        const mentorId = document.getElementById("mentor-id").value;
+        const sessionDate = document.getElementById("session-date").value;
+        const sessionType = document.getElementById("session-type").value;
+        const duration = parseFloat(
+          document.getElementById("session-duration").value
+        );
+        const rate = parseFloat(document.getElementById("session-rate").value);
+
+        if (!mentorId || !sessionDate || isNaN(duration) || isNaN(rate)) {
+          alert("Please fill in all session details with valid values");
+          return;
+        }
+
+        const session = {
+          mentorId,
+          mentorName: `Mentor ${mentorId}`,
+          sessionDate,
+          sessionType,
+          duration,
+          rate,
+          calculatedPayout: (duration * rate).toFixed(2),
+          timestamp: new Date().toISOString(),
+        };
+
+        sessions.push(session);
+        renderSession(session);
+        updateSummary();
+
+        // Clear the form
+        document.getElementById("add-session-form").reset();
+
+        alert(
+          `Session added for Mentor ${mentorId} on ${sessionDate} (${duration} hours)`
+        );
+        logAdminAction("Add Session", `Added session for mentor ${mentorId}`);
+      }
+
+      function renderSession(session) {
+        const tableBody = document.getElementById("sessions-table-body");
+        const row = document.createElement("tr");
+        row.innerHTML = `
+        <td>${session.mentorName}</td>
+        <td>${session.sessionDate}</td>
+        <td>${session.sessionType}</td>
+        <td>${session.duration} hrs</td>
+        <td>$${session.rate}/hr</td>
+        <td class="text-green">$${session.calculatedPayout}</td>
+        <td>
+          <button onclick="viewBreakdown('${session.timestamp}')" class="text-link">
+            View
+          </button>
+        </td>
+      `;
+        tableBody.appendChild(row);
+      }
+
+      function updateSummary() {
+        const totalPayout = sessions.reduce(
+          (sum, session) => sum + parseFloat(session.calculatedPayout),
+          0
+        );
+        document.getElementById("total-sessions").textContent = sessions.length;
+        document.getElementById(
+          "total-payout"
+        ).textContent = `$${totalPayout.toFixed(2)}`;
+        document.getElementById("sessions-table").style.display = "block";
+      }
+
+      function viewBreakdown(timestamp) {
+        const session = sessions.find((s) => s.timestamp === timestamp);
+        if (!session) return;
+
+        let breakdownHTML = `
+        <div class="modal-grid">
+          <div class="modal-section">
+            <h4>Session Details</h4>
+            <div class="breakdown-item">
+              <span>Mentor:</span>
+              <span>${session.mentorName}</span>
+            </div>
+            <div class="breakdown-item">
+              <span>Date:</span>
+              <span>${session.sessionDate}</span>
+            </div>
+            <div class="breakdown-item">
+              <span>Type:</span>
+              <span>${session.sessionType}</span>
+            </div>
+          </div>
+          <div class="modal-section">
+            <h4>Payout Calculation</h4>
+            <div class="breakdown-item">
+              <span>Duration:</span>
+              <span>${session.duration} hours</span>
+            </div>
+            <div class="breakdown-item">
+              <span>Rate:</span>
+              <span>$${session.rate}/hr</span>
+            </div>
+            <div class="breakdown-item breakdown-total">
+              <span>Total:</span>
+              <span>$${session.calculatedPayout}</span>
+            </div>
+          </div>
+        </div>
+      `;
+
+        document.getElementById("breakdown-modal-content").innerHTML =
+          breakdownHTML;
+        document.getElementById("breakdown-modal").style.display = "flex";
+      }
+
+      function closeBreakdownModal() {
+        document.getElementById("breakdown-modal").style.display = "none";
+      }
+
+      function filterSessions() {
+        const range = document.getElementById("date-range").value;
+        let startDate,
+          endDate = new Date();
+
+        switch (range) {
+          case "7":
+            startDate = new Date();
+            startDate.setDate(endDate.getDate() - 7);
+            break;
+          case "15":
+            startDate = new Date();
+            startDate.setDate(endDate.getDate() - 15);
+            break;
+          case "30":
+            startDate = new Date();
+            startDate.setDate(endDate.getDate() - 30);
+            break;
+          case "custom":
+            startDate = new Date(document.getElementById("custom-start").value);
+            endDate = new Date(document.getElementById("custom-end").value);
+            break;
+          default:
+            // Show all sessions
+            document.getElementById("sessions-table-body").innerHTML = "";
+            sessions.forEach((session) => renderSession(session));
+            return;
+        }
+
+        // Filter sessions by date range
+        document.getElementById("sessions-table-body").innerHTML = "";
+        sessions
+          .filter((session) => {
+            const sessionDate = new Date(session.sessionDate);
+            return sessionDate >= startDate && sessionDate <= endDate;
+          })
+          .forEach((session) => renderSession(session));
+      }
+
+      function logAdminAction(action, details) {
+        // In a real app, this would log to a server
+        console.log(`Admin Action: ${action} - ${details}`);
+      }
+
+      function logout() {
+        // Logout implementation
+        window.location.href = "index.html";
+      }
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", function () {
+        // Initialize date range filter visibility
+        document
+          .getElementById("date-range")
+          .addEventListener("change", function () {
+            const customFields = document.getElementById("custom-range-fields");
+            if (this.value === "custom") {
+              customFields.classList.remove("hidden");
+            } else {
+              customFields.classList.add("hidden");
+            }
+          });
+
+        // Load sample data for demo
+        loadSampleSessions();
+      });
+
+      function loadSampleSessions() {
+        // Sample data for demo purposes
+        const sampleSessions = [
+          {
+            mentorId: "JD",
+            mentorName: "John Doe",
+            sessionDate: "2023-08-15",
+            sessionType: "Regular",
+            duration: 2,
+            rate: 50,
+            calculatedPayout: "100.00",
+            timestamp: "2023-08-15T10:30:00Z",
+          },
+          {
+            mentorId: "JS",
+            mentorName: "Jane Smith",
+            sessionDate: "2023-08-14",
+            sessionType: "Workshop",
+            duration: 3,
+            rate: 75,
+            calculatedPayout: "225.00",
+            timestamp: "2023-08-14T14:15:00Z",
+          },
+          {
+            mentorId: "RJ",
+            mentorName: "Robert Johnson",
+            sessionDate: "2023-08-10",
+            sessionType: "1-on-1",
+            duration: 1.5,
+            rate: 60,
+            calculatedPayout: "90.00",
+            timestamp: "2023-08-10T09:45:00Z",
+          },
+        ];
+
+        sessions = sampleSessions;
+        sessions.forEach((session) => renderSession(session));
+        updateSummary();
+      }
+      // Add this to your existing JavaScript
+document.getElementById('session-upload').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  // Check if file is PDF
+  if (file.type !== 'application/pdf') {
+    alert('Please upload a PDF file');
+    return;
+  }
+
+  // Show file info
+  document.getElementById('file-name').textContent = file.name;
+  document.getElementById('file-size').textContent = formatFileSize(file.size);
+  
+  // Show preview
+  const previewContainer = document.getElementById('pdf-preview-container');
+  const previewElement = document.getElementById('pdf-preview');
+  
+  previewContainer.classList.remove('hidden');
+  
+  // Create object URL for the PDF
+  const fileURL = URL.createObjectURL(file);
+  
+  // Create iframe to display PDF
+  previewElement.innerHTML = `
+    <iframe src="${fileURL}#toolbar=0&navpanes=0&scrollbar=0"></iframe>
+  `;
+});
+
+function formatFileSize(bytes) {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2) + ' ' + sizes[i]);
+}
+    </script>
+  </body>
+</html>

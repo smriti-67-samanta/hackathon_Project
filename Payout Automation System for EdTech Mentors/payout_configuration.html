@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EdTech Payout System - Payout Configuration</title>
+    <link rel="stylesheet" href="admin-css/footer.css">
+    <link rel="stylesheet" href="mentor-dashboard/header.css">
+    <style>
+      /* Reset and Base Styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        transition: all 0.3s ease-in-out;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f7fa 100%);
+        color: #1e293b;
+        line-height: 1.6;
+      }
+
+      .container {
+        width: 90%;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* Navigation Bar */
+      header {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #1f2937;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .logout-btn {
+        background: linear-gradient(to right, #ff416c, #ff4b2b);
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.2s ease, background 0.3s ease;
+        font-weight: 500;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .logout-btn:hover {
+        transform: scale(1.05);
+        background: linear-gradient(to right, #ff4b2b, #ff416c);
+      }
+
+      .logout-btn::after {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          120deg,
+          rgba(255, 255, 255, 0.4) 0%,
+          rgba(255, 255, 255, 0.1) 40%,
+          transparent 80%
+        );
+        transform: rotate(30deg);
+        animation: sheen 3s infinite;
+      }
+
+      @keyframes sheen {
+        0% {
+          left: -75%;
+        }
+        100% {
+          left: 125%;
+        }
+      }
+
+      /* Navigation Tabs */
+      .tabs-container {
+        background-color: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        border-radius: 12px 12px 0 0;
+        margin-top: 1.5rem;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      .tabs {
+        display: flex;
+        flex-wrap: wrap;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+      }
+
+      .tab {
+        padding: 12px 20px;
+        text-decoration: none;
+        color: #374151;
+        font-weight: 500;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        margin: 0 4px;
+      }
+
+      .tab:hover {
+        background: rgba(0, 0, 0, 0.05);
+        transform: translateY(-2px);
+      }
+
+      .tab.active {
+        background: linear-gradient(to right, #4facfe, #00f2fe);
+        color: white;
+        box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
+      }
+
+      /* Main Content */
+      .main-content {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        padding: 2rem;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+        animation: fadeInUp 0.4s ease both;
+      }
+
+      h2 {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        color: #1f2937;
+        font-weight: 600;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1.25rem;
+        color: #1f2937;
+        font-weight: 600;
+      }
+
+      h4 {
+        font-size: 1.125rem;
+        margin-bottom: 1rem;
+        color: #1f2937;
+        font-weight: 500;
+      }
+
+      /* Configuration Grid */
+      .config-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      @media (min-width: 768px) {
+        .config-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      /* Configuration Cards */
+      .config-card {
+        background: rgba(249, 250, 251, 0.7);
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+
+      /* Form Elements */
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      label {
+        display: block;
+        font-size: 0.875rem;
+        color: #374151;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+
+      input[type="text"],
+      input[type="number"],
+      input[type="url"],
+      select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid rgba(209, 213, 219, 0.8);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.8);
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+      }
+
+      input[type="text"]:focus,
+      input[type="number"]:focus,
+      input[type="url"]:focus,
+      select:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+      }
+
+      /* Input Groups with Buttons */
+      .input-group {
+        display: flex;
+      }
+
+      .input-group input {
+        flex-grow: 1;
+        border-radius: 8px 0 0 8px !important;
+      }
+
+      .input-group button {
+        border-radius: 0 8px 8px 0 !important;
+      }
+
+      /* Buttons */
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn-primary {
+        background: linear-gradient(to right, #4facfe, #00f2fe);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(79, 172, 254, 0.3);
+      }
+
+      .btn-primary::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(
+          circle,
+          rgba(59, 130, 246, 0.3) 10%,
+          transparent 60%
+        );
+        transform: translate(-50%, -50%) scale(0);
+        transition: transform 0.4s ease;
+        border-radius: 100%;
+        z-index: 0;
+      }
+
+      .btn-primary:hover::before {
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      .btn-warning {
+        background: linear-gradient(to right, #f59e0b, #fbbf24);
+        color: white;
+      }
+
+      .btn-warning:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(245, 158, 11, 0.3);
+      }
+
+      /* Calculation Preview */
+      .calculation-preview {
+        background: rgba(255, 255, 255, 0.8);
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        margin-bottom: 1.5rem;
+      }
+
+      .calculation-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+      }
+
+      .calculation-row.positive {
+        color: #3b82f6;
+      }
+
+      .calculation-row.negative {
+        color: #ef4444;
+      }
+
+      .divider {
+        border-top: 1px solid rgba(229, 231, 235, 0.8);
+        margin: 1rem 0;
+      }
+
+      /* Final Amount */
+      .final-amount {
+        background: #fefce8;
+        padding: 1.5rem;
+        border: 1px solid #fde68a;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        animation: pulse-box 2s infinite;
+      }
+
+      @keyframes pulse-box {
+        0%,
+        100% {
+          box-shadow: 0 0 0 0 rgba(253, 230, 138, 0.4);
+        }
+        50% {
+          box-shadow: 0 0 10px 6px rgba(253, 230, 138, 0.5);
+        }
+      }
+
+      .final-amount .amount {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #16a34a;
+      }
+
+      /* Manual Override */
+      .manual-override {
+        background: rgba(254, 252, 235, 0.8);
+        border-left: 4px solid #f59e0b;
+        padding: 1.5rem;
+        border-radius: 8px;
+      }
+
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .checkbox-group input {
+        margin-right: 0.5rem;
+      }
+
+      /* Override Fields */
+      #override-fields {
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition: max-height 0.5s ease, opacity 0.5s ease;
+      }
+
+      #override-fields:not(.hidden) {
+        max-height: 600px;
+        opacity: 1;
+      }
+
+      /* Current Configuration Table */
+      .config-table-container {
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        margin-top: 2rem;
+        overflow: hidden;
+      }
+
+      .table-header {
+        background: rgba(249, 250, 251, 0.8);
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th {
+        background: rgba(249, 250, 251, 0.8);
+        padding: 1rem;
+        text-align: left;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: #6b7280;
+        font-weight: 600;
+      }
+
+      td {
+        padding: 1rem;
+        border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      tr:hover {
+        background-color: rgba(241, 245, 249, 0.8);
+      }
+
+      /* Visual Elements */
+      .visualization-container {
+        margin: 1.5rem 0;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .fee-breakdown-chart {
+        height: 200px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-around;
+        margin: 1rem 0;
+      }
+
+      .chart-bar {
+        width: 15%;
+        background: linear-gradient(to top, #4facfe, #00f2fe);
+        border-radius: 4px 4px 0 0;
+        position: relative;
+        transition: height 0.5s ease;
+      }
+
+      .chart-bar-label {
+        position: absolute;
+        bottom: -25px;
+        width: 100%;
+        text-align: center;
+        font-size: 0.75rem;
+        color: #64748b;
+      }
+
+      .chart-bar-value {
+        position: absolute;
+        top: -25px;
+        width: 100%;
+        text-align: center;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #1e293b;
+      }
+
+      .history-graph {
+        height: 150px;
+        margin: 1rem 0;
+        position: relative;
+      }
+
+      .graph-line {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: #e2e8f0;
+      }
+
+      .graph-point {
+        position: absolute;
+        bottom: 0;
+        width: 8px;
+        height: 8px;
+        background-color: #3b82f6;
+        border-radius: 50%;
+        transform: translate(-50%, 50%);
+      }
+
+      .graph-point::after {
+        content: attr(data-value);
+        position: absolute;
+        top: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.75rem;
+        color: #64748b;
+      }
+
+      .graph-point::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 2px;
+        height: var(--height);
+        background-color: #3b82f6;
+        transform: translateX(-50%);
+      }
+
+      /* Toggle Switch */
+      .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 24px;
+        margin-left: 10px;
+      }
+
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 24px;
+      }
+
+      .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+      }
+
+      input:checked + .toggle-slider {
+        background: linear-gradient(to right, #4facfe, #00f2fe);
+      }
+
+      input:checked + .toggle-slider:before {
+        transform: translateX(26px);
+      }
+
+      /* Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Tooltip */
+      .tooltip {
+        position: relative;
+        display: inline-block;
+        margin-left: 5px;
+      }
+
+      .tooltip-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        background-color: #3b82f6;
+        color: white;
+        border-radius: 50%;
+        font-size: 12px;
+        cursor: help;
+      }
+
+      .tooltip-text {
+        visibility: hidden;
+        width: 200px;
+        background-color: #1e293b;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 8px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 0.75rem;
+        font-weight: normal;
+      }
+
+      .tooltip:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Navigation Bar -->
+    <header class="etm-header">
+      <div class="etm-header-container">
+        <div class="etm-header-content">
+          <div class="etm-logo">EdTech Mentor Dashboard</div>
+          <div class="etm-user-info">
+            <span>Welcome, <span id="etm-mentor-name">Mentor</span>!</span>
+            <div class="etm-notification-tooltip">
+              <i class="fas fa-bell" style="font-size: 1.2rem; margin-right: 1rem;"></i>
+              <span class="etm-notification-badge pulse">3</span>
+            </div>
+            <button onclick="logout()" class="etm-logout-btn">Logout</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Admin Navigation Tabs -->
+    <div class="container tabs-container">
+      <div class="tabs">
+        <a href="session_management.html" class="tab">Session Management</a>
+        <a href="payout_configuration.html" class="tab active"
+          >Payout Configuration</a
+        >
+        <a href="receipt_generation.html" class="tab">Receipt Generation</a>
+        <a href="admin-chat.html" class="tab">Mentor Communication</a>
+        <a href="audit-logs.html" class="tab">Audit Trails</a>
+        <a href="test-mode.html" class="tab">Test Mode</a>
+        <a href="data-export.html" class="tab">Data Export & Integration</a>
+      </div>
+    </div>
+
+    <!-- Payout Configuration Section -->
+    <div class="container main-content">
+      <h2>Automated Payout Calculation & Tax Handling</h2>
+
+      <!-- Configuration Form -->
+      <div class="config-grid">
+        <!-- Left Column - Fee Configuration -->
+        <div class="config-card">
+          <h3>Fee & Tax Configuration</h3>
+
+          <!-- Platform Fee -->
+          <div class="form-group">
+            <div class="flex items-center">
+              <label>Platform Fee (%)</label>
+              <div class="tooltip">
+                <span class="tooltip-icon">?</span>
+                <span class="tooltip-text">This percentage will be added to the base session fee before taxes are calculated</span>
+              </div>
+            </div>
+            <div class="input-group">
+              <input
+                type="number"
+                id="platform-fee"
+                value="10"
+                min="0"
+                max="100"
+                step="0.1"
+                onchange="updateCalculationPreview()"
+              />
+              <button onclick="updatePlatformFee()" class="btn btn-primary">
+                Apply
+              </button>
+            </div>
+            <div class="visualization-container">
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-sm">Platform Fee Impact</span>
+                <div class="flex items-center">
+                  <span class="text-xs mr-2">Show History</span>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="show-platform-history" onchange="togglePlatformHistory()">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+              <div class="fee-breakdown-chart" id="platform-fee-chart">
+                <div class="chart-bar" style="height: 30%;">
+                  <span class="chart-bar-value">5%</span>
+                  <span class="chart-bar-label">Basic</span>
+                </div>
+                <div class="chart-bar" style="height: 60%;">
+                  <span class="chart-bar-value">10%</span>
+                  <span class="chart-bar-label">Standard</span>
+                </div>
+                <div class="chart-bar" style="height: 90%;">
+                  <span class="chart-bar-value">15%</span>
+                  <span class="chart-bar-label">Premium</span>
+                </div>
+              </div>
+              <div class="history-graph hidden" id="platform-history-graph">
+                <div class="graph-line"></div>
+                <!-- Graph points will be added dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- GST/Tax Rate -->
+          <div class="form-group">
+            <div class="flex items-center">
+              <label>GST/Tax Rate (%)</label>
+              <div class="tooltip">
+                <span class="tooltip-icon">?</span>
+                <span class="tooltip-text">Tax rate applied to the subtotal (base fee + platform fee)</span>
+              </div>
+            </div>
+            <div class="input-group">
+              <input
+                type="number"
+                id="tax-rate"
+                value="18"
+                min="0"
+                max="100"
+                step="0.1"
+                onchange="updateCalculationPreview()"
+              />
+              <button onclick="updateTaxRate()" class="btn btn-primary">
+                Apply
+              </button>
+            </div>
+            <div class="visualization-container">
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-sm">Tax Rate Comparison</span>
+                <div class="flex items-center">
+                  <span class="text-xs mr-2">Regional View</span>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="show-regional-tax" onchange="toggleRegionalTaxView()">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+              <div class="fee-breakdown-chart" id="tax-rate-chart">
+                <!-- Dynamic bars will be added here -->
+              </div>
+              <div class="hidden" id="regional-tax-view">
+                <select id="region-select" class="w-full mt-2" onchange="updateRegionalTaxView()">
+                  <option value="global">Global</option>
+                  <option value="us">United States</option>
+                  <option value="eu">European Union</option>
+                  <option value="asia">Asia</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Additional Charges -->
+          <div class="form-group">
+            <label>Additional Charges (Fixed Amount)</label>
+            <div class="input-group">
+              <input
+                type="number"
+                id="additional-charges"
+                value="0"
+                min="0"
+                step="1"
+                onchange="updateCalculationPreview()"
+              />
+              <button onclick="updateCharges()" class="btn btn-primary">
+                Apply
+              </button>
+            </div>
+          </div>
+
+          <!-- Custom Charges -->
+          <div class="form-group">
+            <label>Custom Charges (Description)</label>
+            <input
+              type="text"
+              id="custom-charge-desc"
+              placeholder="Description"
+              class="mb-2 w-full"
+            />
+            <div class="input-group">
+              <input
+                type="number"
+                id="custom-charge-amount"
+                value="0"
+                min="0"
+                step="1"
+              />
+              <button onclick="addCustomCharge()" class="btn btn-primary">
+                Add
+              </button>
+            </div>
+            <div id="custom-charges-list" class="mt-2">
+              <!-- Custom charges will be added here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column - Calculation Preview -->
+        <div class="config-card">
+          <h3>Payout Calculation Preview</h3>
+
+          <!-- Session Fee Input -->
+          <div class="form-group">
+            <label>Enter Session Fee to Preview</label>
+            <input
+              type="number"
+              id="session-fee-input"
+              value="100"
+              min="0"
+              step="1"
+              onchange="updateCalculationPreview()"
+              class="w-full"
+            />
+          </div>
+
+          <!-- Example Calculation -->
+          <div class="calculation-preview">
+            <h4>Payout Breakdown</h4>
+            <div class="space-y-2" id="calculation-breakdown">
+              <div class="calculation-row">
+                <span>Base Session Fee:</span>
+                <span id="base-fee">$100.00</span>
+              </div>
+              <div class="calculation-row positive">
+                <span>+ Platform Fee (<span id="platform-fee-display">10</span>%):</span>
+                <span id="platform-fee-amount">+$10.00</span>
+              </div>
+              <div class="calculation-row positive">
+                <span>+ GST (<span id="tax-rate-display">18</span>% on $<span id="subtotal-display">110.00</span>):</span>
+                <span id="tax-amount">+$19.80</span>
+              </div>
+              <div class="calculation-row positive">
+                <span>+ Additional Charges:</span>
+                <span id="additional-charges-amount">+$0.00</span>
+              </div>
+              <div id="custom-charges-preview">
+                <!-- Custom charges will be added here -->
+              </div>
+              <div class="divider"></div>
+            </div>
+          </div>
+
+          <!-- Final Payable Amount - Highlighted Section -->
+          <div class="final-amount">
+            <div class="flex justify-between items-center">
+              <span class="text-lg font-bold">Total Amount Payable:</span>
+              <span class="amount" id="total-amount">$129.80</span>
+            </div>
+            <p class="text-sm text-gray-600 mt-1">
+              This is the final amount that will be paid to the mentor
+            </p>
+          </div>
+
+          <!-- Visual Breakdown -->
+          <div class="visualization-container mt-4">
+            <h4>Fee Distribution</h4>
+            <div class="flex items-center justify-center my-4">
+              <div class="relative w-40 h-40" id="pie-chart">
+                <!-- Pie chart segments will be added here -->
+              </div>
+            </div>
+            <div class="flex flex-wrap justify-center gap-2" id="pie-legend">
+              <!-- Legend will be added here -->
+            </div>
+          </div>
+
+          <!-- Manual Override -->
+          <div class="manual-override">
+            <h4>Manual Override</h4>
+            <div class="checkbox-group">
+              <input type="checkbox" id="enable-override" class="mr-2" onchange="toggleOverrideFields()" />
+              <label for="enable-override">Enable manual override</label>
+            </div>
+            <div id="override-fields" class="hidden space-y-2">
+              <div class="form-group">
+                <label>Override Reason</label>
+                <input type="text" id="override-reason" class="w-full" />
+              </div>
+              <div class="form-group">
+                <label>Override Amount ($)</label>
+                <input
+                  type="number"
+                  id="override-amount"
+                  min="0"
+                  step="0.01"
+                  class="w-full"
+                />
+              </div>
+              <button onclick="applyOverride()" class="btn btn-warning">
+                Apply Override
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Current Configuration -->
+      <div class="config-table-container">
+        <div class="table-header">
+          <h3>Current Payout Configuration</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table id="config-table">
+            <thead>
+              <tr>
+                <th>Parameter</th>
+                <th>Value</th>
+                <th>Last Updated</th>
+                <th>Updated By</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Platform Fee</td>
+                <td>10% (added)</td>
+                <td>2023-08-01 09:15</td>
+                <td>admin@example.com</td>
+                <td><button class="text-blue-500 hover:underline" onclick="editConfig('platform-fee')">Edit</button></td>
+              </tr>
+              <tr>
+                <td>GST Rate</td>
+                <td>18% (added)</td>
+                <td>2023-07-15 14:30</td>
+                <td>finance@example.com</td>
+                <td><button class="text-blue-500 hover:underline" onclick="editConfig('tax-rate')">Edit</button></td>
+              </tr>
+              <tr>
+                <td>Additional Charges</td>
+                <td>$0.00</td>
+                <td>2023-06-20 11:45</td>
+                <td>admin@example.com</td>
+                <td><button class="text-blue-500 hover:underline" onclick="editConfig('additional-charges')">Edit</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- footer -->
+    <footer class="button-footer">
+      <div class="footer-container">
+        <div class="button-group">
+          <button class="nav-btn prev-btn" onclick="goPrevious()">
+            ← Previous Page
+          </button>
+
+          <button class="nav-btn home-btn" onclick="goHome()">🏠 Home</button>
+
+          <button class="nav-btn next-btn" onclick="goNext()">
+            Next Page →
+          </button>
+        </div>
+
+        <div class="footer-info">
+          
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Configuration data
+      const configData = {
+        platformFee: 10,
+        taxRate: 18,
+        additionalCharges: 0,
+        customCharges: [],
+        override: null
+      };
+
+      // Regional tax data
+      const regionalTaxData = {
+        global: [
+          { name: "Standard", rate: 18 },
+          { name: "Reduced", rate: 10 },
+          { name: "Super Reduced", rate: 5 },
+          { name: "Zero", rate: 0 }
+        ],
+        us: [
+          { name: "California", rate: 7.25 },
+          { name: "New York", rate: 8.875 },
+          { name: "Texas", rate: 6.25 },
+          { name: "Florida", rate: 6 }
+        ],
+        eu: [
+          { name: "Germany", rate: 19 },
+          { name: "France", rate: 20 },
+          { name: "Italy", rate: 22 },
+          { name: "Spain", rate: 21 }
+        ],
+        asia: [
+          { name: "China", rate: 13 },
+          { name: "Japan", rate: 10 },
+          { name: "India", rate: 18 },
+          { name: "Singapore", rate: 7 }
+        ]
+      };
+
+      // Platform fee history
+      const platformFeeHistory = [
+        { date: "2023-01-01", fee: 5 },
+        { date: "2023-03-15", fee: 8 },
+        { date: "2023-06-01", fee: 10 },
+        { date: "2023-08-01", fee: 10 }
+      ];
+
+      // Initialize the page
+      document.addEventListener('DOMContentLoaded', function() {
+        updateCalculationPreview();
+        renderTaxRateChart();
+        renderPlatformHistoryGraph();
+        renderPieChart();
+      });
+
+      // Navigation functions
+      function goPrevious() {
+        window.location.href = "session_management.html";
+      }
+      function goHome() {
+        window.location.href = "session_management.html";
+      }
+      function goNext() {
+        window.location.href = "receipt_generation.html";
+      }
+
+      // Toggle functions
+      function togglePlatformHistory() {
+        const showHistory = document.getElementById('show-platform-history').checked;
+        document.getElementById('platform-fee-chart').classList.toggle('hidden', showHistory);
+        document.getElementById('platform-history-graph').classList.toggle('hidden', !showHistory);
+      }
+
+      function toggleRegionalTaxView() {
+        const showRegional = document.getElementById('show-regional-tax').checked;
+        document.getElementById('tax-rate-chart').classList.toggle('hidden', showRegional);
+        document.getElementById('regional-tax-view').classList.toggle('hidden', !showRegional);
+        if (showRegional) {
+          updateRegionalTaxView();
+        }
+      }
+
+      function toggleOverrideFields() {
+        const enableOverride = document.getElementById('enable-override').checked;
+        document.getElementById('override-fields').classList.toggle('hidden', !enableOverride);
+        if (!enableOverride) {
+          configData.override = null;
+          updateCalculationPreview();
+        }
+      }
+
+      // Configuration update functions
+      function updatePlatformFee() {
+        const fee = parseFloat(document.getElementById("platform-fee").value);
+        if (isNaN(fee)) {
+          alert("Please enter a valid number for platform fee");
+          return;
+        }
+        configData.platformFee = fee;
+        showToast(`Platform fee updated to ${fee}% (added to base amount)`);
+        logChange("Platform Fee", `${fee}% (added)`);
+        updateCalculationPreview();
+        renderPlatformHistoryGraph();
+      }
+
+      function updateTaxRate() {
+        const rate = parseFloat(document.getElementById("tax-rate").value);
+        if (isNaN(rate)) {
+          alert("Please enter a valid number for tax rate");
+          return;
+        }
+        configData.taxRate = rate;
+        showToast(`Tax rate updated to ${rate}% (added to subtotal)`);
+        logChange("GST Rate", `${rate}% (added)`);
+        updateCalculationPreview();
+        renderTaxRateChart();
+      }
+
+      function updateCharges() {
+        const amount = parseFloat(document.getElementById("additional-charges").value);
+        if (isNaN(amount)) {
+          alert("Please enter a valid number for additional charges");
+          return;
+        }
+        configData.additionalCharges = amount;
+        showToast(`Additional charges updated to $${amount} (added to total)`);
+        logChange("Additional Charges", `$${amount}`);
+        updateCalculationPreview();
+      }
+
+      function addCustomCharge() {
+        const desc = document.getElementById("custom-charge-desc").value.trim();
+        const amount = parseFloat(document.getElementById("custom-charge-amount").value);
+        
+        if (!desc || isNaN(amount) || amount <= 0) {
+          alert("Please enter a description and valid amount");
+          return;
+        }
+        
+        const charge = { description: desc, amount: amount };
+        configData.customCharges.push(charge);
+        showToast(`Custom charge added: ${desc} - $${amount}`);
+        logChange("Custom Charge", `${desc}: $${amount}`);
+        
+        // Update UI
+        renderCustomCharges();
+        updateCalculationPreview();
+        
+        // Clear inputs
+        document.getElementById("custom-charge-desc").value = "";
+        document.getElementById("custom-charge-amount").value = "0";
+      }
+
+      function removeCustomCharge(index) {
+        const charge = configData.customCharges[index];
+        configData.customCharges.splice(index, 1);
+        showToast(`Removed custom charge: ${charge.description}`);
+        renderCustomCharges();
+        updateCalculationPreview();
+      }
+
+      function applyOverride() {
+        const reason = document.getElementById("override-reason").value.trim();
+        const amount = parseFloat(document.getElementById("override-amount").value);
+        
+        if (!reason || isNaN(amount) || amount <= 0) {
+          alert("Please enter a reason and valid amount");
+          return;
+        }
+        
+        configData.override = { reason: reason, amount: amount };
+        showToast(`Manual override applied: $${amount} (Reason: ${reason})`);
+        logChange("Manual Override", `$${amount} (Reason: ${reason})`);
+        updateCalculationPreview();
+      }
+
+      function editConfig(configType) {
+        let value;
+        switch(configType) {
+          case 'platform-fee':
+            value = prompt("Enter new Platform Fee (%):", configData.platformFee);
+            if (value !== null && !isNaN(parseFloat(value))) {
+              document.getElementById("platform-fee").value = value;
+              updatePlatformFee();
+            }
+            break;
+          case 'tax-rate':
+            value = prompt("Enter new Tax Rate (%):", configData.taxRate);
+            if (value !== null && !isNaN(parseFloat(value))) {
+              document.getElementById("tax-rate").value = value;
+              updateTaxRate();
+            }
+            break;
+          case 'additional-charges':
+            value = prompt("Enter new Additional Charges ($):", configData.additionalCharges);
+            if (value !== null && !isNaN(parseFloat(value))) {
+              document.getElementById("additional-charges").value = value;
+              updateCharges();
+            }
+            break;
+        }
+      }
+
+      // Calculation functions
+      function updateCalculationPreview() {
+        const sessionFee = parseFloat(document.getElementById("session-fee-input").value) || 0;
+        
+        // Calculate platform fee
+        const platformFeeAmount = sessionFee * (configData.platformFee / 100);
+        const subtotal = sessionFee + platformFeeAmount;
+        
+        // Calculate tax
+        const taxAmount = subtotal * (configData.taxRate / 100);
+        
+        // Calculate additional charges
+        const additionalCharges = configData.additionalCharges;
+        
+        // Calculate custom charges
+        const customChargesTotal = configData.customCharges.reduce((sum, charge) => sum + charge.amount, 0);
+        
+        // Calculate total
+        let total = subtotal + taxAmount + additionalCharges + customChargesTotal;
+        
+        // Apply override if exists
+        if (configData.override) {
+          total = configData.override.amount;
+        }
+        
+        // Update UI
+        document.getElementById("base-fee").textContent = `$${sessionFee.toFixed(2)}`;
+        document.getElementById("platform-fee-display").textContent = configData.platformFee;
+        document.getElementById("platform-fee-amount").textContent = `+$${platformFeeAmount.toFixed(2)}`;
+        document.getElementById("tax-rate-display").textContent = configData.taxRate;
+        document.getElementById("subtotal-display").textContent = subtotal.toFixed(2);
+        document.getElementById("tax-amount").textContent = `+$${taxAmount.toFixed(2)}`;
+        document.getElementById("additional-charges-amount").textContent = `+$${additionalCharges.toFixed(2)}`;
+        document.getElementById("total-amount").textContent = `$${total.toFixed(2)}`;
+        
+        // Update custom charges preview
+        renderCustomChargesPreview();
+        
+        // Update pie chart
+        renderPieChart(sessionFee, platformFeeAmount, taxAmount, additionalCharges, customChargesTotal);
+      }
+
+      // Rendering functions
+      function renderCustomCharges() {
+        const container = document.getElementById("custom-charges-list");
+        container.innerHTML = "";
+        
+        configData.customCharges.forEach((charge, index) => {
+          const div = document.createElement("div");
+          div.className = "flex justify-between items-center py-1 px-2 bg-blue-50 rounded mb-1";
+          div.innerHTML = `
+            <span>${charge.description}: $${charge.amount.toFixed(2)}</span>
+            <button onclick="removeCustomCharge(${index})" class="text-red-500 hover:text-red-700">
+              &times;
+            </button>
+          `;
+          container.appendChild(div);
+        });
+      }
+
+      function renderCustomChargesPreview() {
+        const container = document.getElementById("custom-charges-preview");
+        container.innerHTML = "";
+        
+        configData.customCharges.forEach(charge => {
+          const row = document.createElement("div");
+          row.className = "calculation-row positive";
+          row.innerHTML = `
+            <span>+ ${charge.description}:</span>
+            <span>+$${charge.amount.toFixed(2)}</span>
+          `;
+          container.appendChild(row);
+        });
+      }
+
+      function renderTaxRateChart() {
+        const container = document.getElementById("tax-rate-chart");
+        container.innerHTML = "";
+        
+        // Create bars for standard tax rates
+        const rates = [5, 10, 15, 20, 25];
+        rates.forEach(rate => {
+          const bar = document.createElement("div");
+          bar.className = "chart-bar";
+          
+          // Highlight the current rate
+          const isCurrent = rate === configData.taxRate;
+          const height = (rate / 25) * 100;
+          bar.style.height = `${height}%`;
+          bar.style.background = isCurrent 
+            ? "linear-gradient(to top, #4facfe, #00f2fe)"
+            : "linear-gradient(to top, #e2e8f0, #cbd5e1)";
+          
+          const value = document.createElement("span");
+          value.className = "chart-bar-value";
+          value.textContent = `${rate}%`;
+          
+          const label = document.createElement("span");
+          label.className = "chart-bar-label";
+          label.textContent = isCurrent ? "Current" : "";
+          
+          bar.appendChild(value);
+          bar.appendChild(label);
+          container.appendChild(bar);
+        });
+      }
+
+      function renderPlatformHistoryGraph() {
+        const container = document.getElementById("platform-history-graph");
+        container.innerHTML = '<div class="graph-line"></div>';
+        
+        // Find max fee for scaling
+        const maxFee = Math.max(...platformFeeHistory.map(item => item.fee));
+        
+        // Add current fee to history for display
+        const history = [...platformFeeHistory];
+        if (history[history.length - 1].fee !== configData.platformFee) {
+          history.push({ 
+            date: new Date().toISOString().split('T')[0], 
+            fee: configData.platformFee 
+          });
+        }
+        
+        // Add points to graph
+        history.forEach((item, index) => {
+          const point = document.createElement("div");
+          point.className = "graph-point";
+          
+          // Position point horizontally (spread evenly)
+          const left = (index / (history.length - 1)) * 100;
+          point.style.left = `${left}%`;
+          
+          // Set height based on fee value
+          const height = (item.fee / maxFee) * 100;
+          point.style.setProperty('--height', `${height}px`);
+          
+          // Add data value
+          point.setAttribute('data-value', `${item.fee}%`);
+          
+          container.appendChild(point);
+        });
+      }
+
+      function renderPieChart(baseFee = 100, platformFee = 10, taxAmount = 19.8, additionalCharges = 0, customCharges = 0) {
+        const container = document.getElementById("pie-chart");
+        const legendContainer = document.getElementById("pie-legend");
+        
+        // Calculate total for percentages
+        const total = baseFee + platformFee + taxAmount + additionalCharges + customCharges;
+        
+        // Define segments
+        const segments = [
+          { name: "Mentor Earnings", value: baseFee, color: "#4ade80" },
+          { name: "Platform Fee", value: platformFee, color: "#60a5fa" },
+          { name: "Taxes", value: taxAmount, color: "#f87171" },
+          { name: "Additional Charges", value: additionalCharges, color: "#fbbf24" },
+          { name: "Custom Charges", value: customCharges, color: "#a78bfa" }
+        ].filter(segment => segment.value > 0);
+        
+        // Clear previous content
+        container.innerHTML = "";
+        legendContainer.innerHTML = "";
+        
+        // Calculate cumulative percentage for conic-gradient
+        let cumulativePercent = 0;
+        const gradientStops = segments.map(segment => {
+          const percent = (segment.value / total) * 100;
+          const stop = `${segment.color} ${cumulativePercent}% ${cumulativePercent + percent}%`;
+          cumulativePercent += percent;
+          return stop;
+        }).join(', ');
+        
+        // Create pie chart with conic-gradient
+        container.style.background = `conic-gradient(${gradientStops})`;
+        
+        // Add legend
+        segments.forEach(segment => {
+          const percent = ((segment.value / total) * 100).toFixed(1);
+          const legendItem = document.createElement("div");
+          legendItem.className = "flex items-center text-xs";
+          legendItem.innerHTML = `
+            <span class="inline-block w-3 h-3 mr-1 rounded-full" style="background:${segment.color}"></span>
+            ${segment.name}: ${percent}%
+          `;
+          legendContainer.appendChild(legendItem);
+        });
+      }
+
+      function updateRegionalTaxView() {
+        const region = document.getElementById("region-select").value;
+        const container = document.getElementById("tax-rate-chart");
+        container.innerHTML = "";
+        
+        // Get regional data
+        const regionalData = regionalTaxData[region];
+        
+        // Find max rate for scaling
+        const maxRate = Math.max(...regionalData.map(item => item.rate));
+        
+        // Create bars for regional rates
+        regionalData.forEach(item => {
+          const bar = document.createElement("div");
+          bar.className = "chart-bar";
+          
+          // Highlight if matches current rate (within 0.5%)
+          const isCurrent = Math.abs(item.rate - configData.taxRate) < 0.5;
+          const height = (item.rate / maxRate) * 100;
+          bar.style.height = `${height}%`;
+          bar.style.background = isCurrent 
+            ? "linear-gradient(to top, #4facfe, #00f2fe)"
+            : "linear-gradient(to top, #e2e8f0, #cbd5e1)";
+          
+          const value = document.createElement("span");
+          value.className = "chart-bar-value";
+          value.textContent = `${item.rate}%`;
+          
+          const label = document.createElement("span");
+          label.className = "chart-bar-label";
+          label.textContent = item.name;
+          
+          bar.appendChild(value);
+          bar.appendChild(label);
+          container.appendChild(bar);
+        });
+      }
+
+      // Utility functions
+      function logChange(parameter, newValue) {
+        // In a real implementation, this would send to server for audit logging
+        console.log(`Configuration change: ${parameter} set to ${newValue}`);
+        
+        // Update the config table (simulated)
+        const rows = document.querySelectorAll("#config-table tbody tr");
+        rows.forEach(row => {
+          if (row.cells[0].textContent.includes(parameter.split(' ')[0])) {
+            row.cells[1].textContent = newValue;
+            row.cells[2].textContent = new Date().toISOString().replace('T', ' ').substring(0, 16);
+            row.cells[3].textContent = "admin@example.com";
+          }
+        });
+      }
+
+      function showToast(message) {
+        // Create toast element
+        const toast = document.createElement("div");
+        toast.className = "fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded shadow-lg";
+        toast.textContent = message;
+        
+        // Add to DOM
+        document.body.appendChild(toast);
+        
+        // Remove after delay
+        setTimeout(() => {
+          toast.classList.add("opacity-0", "transition-opacity", "duration-300");
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
+
+      function logout() {
+        // Logout implementation
+        window.location.href = "index.html";
+      }
+    </script>
+  </body>
+</html>

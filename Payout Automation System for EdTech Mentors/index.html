@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-image: url("https://png.pngtree.com/thumb_back/fh260/background/20221108/pngtree-the-way-to-success-or-career-guidance-goal-business-least-photo-image_28573284.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .auth-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .auth-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        .auth-btn:hover {
+            background-color: #3367d6;
+        }
+        .toggle-form {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+        .toggle-form a {
+            color: #4285f4;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .message {
+            padding: 0.75rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .success {
+            background-color: #e6f7ee;
+            color: #2e7d32;
+        }
+        .error {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        #signupForm {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Login Form (shown first) -->
+        <form id="loginForm">
+            <h2 style="text-align: center; margin-bottom: 1.5rem;">Log In</h2>
+            <div id="login-message" class="message"></div>
+            <div class="form-group">
+                <label for="login-email">Email</label>
+                <input type="email" id="login-email" required placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" required placeholder="Enter your password">
+            </div>
+            <button type="button" id="login-btn" class="auth-btn">Log In</button>
+            <div class="toggle-form">
+                <span>Don't have an account? </span>
+                <a href="#" id="showSignup">Sign Up</a>
+            </div>
+        </form>
+
+        <!-- Signup Form (hidden initially) -->
+        <form id="signupForm">
+            <h2 style="text-align: center; margin-bottom: 1.5rem;">Create Account</h2>
+            <div id="signup-message" class="message"></div>
+            <div class="form-group">
+                <label for="signup-email">Email</label>
+                <input type="email" id="signup-email" required placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+                <label for="signup-password">Password</label>
+                <input type="password" id="signup-password" required placeholder="Create a password">
+            </div>
+            <div class="form-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" required placeholder="Confirm your password">
+            </div>
+            <div class="form-group">
+                <label for="signup-role">Role</label>
+                <select id="signup-role" required>
+                    <option value="" disabled selected>Select your role</option>
+                    <option value="admin">Admin</option>
+                    <option value="mentor">Mentor</option>
+                </select>
+            </div>
+            <button type="button" id="signup-btn" class="auth-btn">Sign Up</button>
+            <div class="toggle-form">
+                <span>Already have an account? </span>
+                <a href="#" id="showLogin">Log In</a>
+            </div>
+        </form>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-analytics.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword,
+            setPersistence,
+            browserLocalPersistence,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-auth.js";
+        import { 
+            getDatabase,
+            ref,
+            set,
+            get
+        } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC9E7dm9p6el0dreVlmKlf7QHV3GPzFIbk",
+            authDomain: "authentication-453d8.firebaseapp.com",
+            databaseURL: "https://authentication-453d8-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "authentication-453d8",
+            storageBucket: "authentication-453d8.firebasestorage.app",
+            messagingSenderId: "606665206020",
+            appId: "1:606665206020:web:851e6c1671d584ca500851"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const database = getDatabase(app);
+
+        // Show login form by default, signup form hidden
+        document.getElementById('loginForm').style.display = 'block';
+        document.getElementById('signupForm').style.display = 'none';
+
+        // Form toggle functionality
+        document.getElementById('showSignup').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('signupForm').style.display = 'block';
+            document.getElementById('signup-message').textContent = '';
+        });
+
+        document.getElementById('showLogin').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('signupForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('login-message').textContent = '';
+        });
+
+        // Sign Up
+        document.getElementById('signup-btn').addEventListener('click', () => {
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const role = document.getElementById('signup-role').value;
+            const messageEl = document.getElementById('signup-message');
+
+            // Clear messages
+            messageEl.textContent = '';
+            messageEl.className = 'message';
+
+            // Validate
+            if (password !== confirmPassword) {
+                messageEl.textContent = "Passwords don't match";
+                messageEl.classList.add('error');
+                return;
+            }
+
+            if (!role) {
+                messageEl.textContent = "Please select a role";
+                messageEl.classList.add('error');
+                return;
+            }
+
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    
+                    // Save user data with role to Realtime Database
+                    return set(ref(database, 'users/' + user.uid), {
+                        email: email,
+                        role: role,
+                        createdAt: new Date().toISOString()
+                    });
+                })
+                .then(() => {
+                    // Show success message
+                    messageEl.textContent = 'Account created successfully! Please log in.';
+                    messageEl.classList.add('success');
+                    
+                    // Clear form
+                    document.getElementById('signup-email').value = '';
+                    document.getElementById('signup-password').value = '';
+                    document.getElementById('confirm-password').value = '';
+                    document.getElementById('signup-role').value = '';
+                    
+                    // Automatically switch to login form after 2 seconds
+                    setTimeout(() => {
+                        document.getElementById('signupForm').style.display = 'none';
+                        document.getElementById('loginForm').style.display = 'block';
+                        messageEl.textContent = '';
+                    }, 2000);
+                    
+                    // Sign out the user immediately after signup
+                    return signOut(auth);
+                })
+                .catch(error => {
+                    messageEl.textContent = error.message;
+                    messageEl.classList.add('error');
+                });
+        });
+
+        // Log In
+        document.getElementById('login-btn').addEventListener('click', () => {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const messageEl = document.getElementById('login-message');
+
+            messageEl.textContent = '';
+            messageEl.className = 'message';
+
+            setPersistence(auth, browserLocalPersistence)
+                .then(() => {
+                    return signInWithEmailAndPassword(auth, email, password);
+                })
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    // Check user role and redirect
+                    return get(ref(database, 'users/' + user.uid));
+                })
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const userData = snapshot.val();
+                        if (userData.role === 'admin') {
+                            window.location.href = 'session_management.html';
+                        } else if (userData.role === 'mentor') {
+                            window.location.href = 'mentor-dashboard/mentor-dashboard.html';
+                        }
+                    } else {
+                        messageEl.textContent = 'User role not found';
+                        messageEl.classList.add('error');
+                        return signOut(auth); // Sign out if role not found
+                    }
+                })
+                .catch(error => {
+                    messageEl.textContent = error.message;
+                    messageEl.classList.add('error');
+                });
+        });
+    </script>
+</body>
+</html>

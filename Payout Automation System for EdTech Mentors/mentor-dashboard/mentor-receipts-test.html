@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fixed Firebase Test</title>
+  <!-- Using compat versions to avoid module issues -->
+  <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <h1>Fixed Firebase Test</h1>
+  <button id="testBtn">Run Test</button>
+  <div id="output"></div>
+
+  <script>
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBhQv2w5KN0BpcJt9vEitH1u6xSIlpALXA",
+      authDomain: "login-signup-3b9ba.firebaseapp.com",
+      projectId: "login-signup-3b9ba",
+      storageBucket: "login-signup-3b9ba.firebasestorage.app",
+      messagingSenderId: "561319252676",
+      appId: "1:561319252676:web:83748a27f70311eaa72f91",
+      measurementId: "G-2Z9XLWR32W"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Rest of your code remains the same...
+    document.getElementById("testBtn").addEventListener("click", async function() {
+      try {
+        const user = await auth.signInWithEmailAndPassword("test@example.com", "password123");
+        const docRef = await db.collection("testCollection").add({
+          message: "This works now!",
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        document.getElementById("output").innerHTML = 
+          `✅ Success! Created document ${docRef.id} as user ${user.user.email}`;
+      } catch (error) {
+        document.getElementById("output").innerHTML = 
+          `❌ Error: ${error.message}`;
+      }
+    });
+  </script>
+</body>
+</html>

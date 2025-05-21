@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EdTech Payout System - Receipt Generation</title>
+  <link rel="stylesheet" href="admin-css/receipt-generation.css">
+  <link rel="stylesheet" href="admin-css/footer.css">
+  <!-- Chart.js for visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="mentor-dashboard/header.css">
+</head>
+
+<body>
+  <!-- Navigation Bar -->
+  <header class="etm-header">
+    <div class="etm-header-container">
+      <div class="etm-header-content">
+        <div class="etm-logo">EdTech Mentor Dashboard</div>
+        <div class="etm-user-info">
+          <span>Welcome, <span id="etm-mentor-name">Mentor</span>!</span>
+          <div class="etm-notification-tooltip">
+            <i class="fas fa-bell" style="font-size: 1.2rem; margin-right: 1rem;"></i>
+            <span class="etm-notification-badge pulse">3</span>
+          </div>
+          <button onclick="logout()" class="etm-logout-btn">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Admin Navigation Tabs -->
+  <div class="tabs-container">
+    <div class="tabs">
+      <a href="session_management.html" class="tab">Session Management</a>
+      <a href="payout_configuration.html" class="tab">Payout Configuration</a>
+      <a href="receipt_generation.html" class="tab active">Receipt Generation</a>
+      <a href="admin-chat.html" class="tab">Mentor Communication</a>
+      <a href="audit-logs.html" class="tab">Audit Trails</a>
+      <a href="test-mode.html" class="tab">Test Mode</a>
+      <a href="data-export.html" class="tab">Data Export</a>
+    </div>
+  </div>
+
+  <!-- Receipt Generation Section -->
+  <div class="main-container">
+    <h1 class="page-title">Receipt Generation & Sharing <i class="fas fa-receipt"></i></h1>
+    
+    <div class="grid-container">
+      <!-- Mentor Selection -->
+      <div class="form-section">
+        <h4 class="section-title"><i class="fas fa-chalkboard-teacher"></i> Select Mentor</h4>
+        <select id="mentor-select" class="select-dropdown">
+          <option value="">-- Select a Mentor --</option>
+          <option value="mentor1@example.com">John Doe (mentor1@example.com)</option>
+          <option value="mentor2@example.com">Jane Smith (mentor2@example.com)</option>
+          <option value="mentor3@example.com">Robert Johnson (mentor3@example.com)</option>
+          <option value="mentor4@example.com">Sarah Williams (mentor4@example.com)</option>
+        </select>
+        
+        <div id="mentor-stats" style="margin: 20px 0; display: none;">
+          <h4 class="section-title"><i class="fas fa-chart-bar"></i> Mentor Stats</h4>
+          <canvas id="mentorChart" width="100%" height="200"></canvas>
+        </div>
+        
+        <h4 class="section-title"><i class="fas fa-comment"></i> Custom Message</h4>
+        <textarea id="receipt-message" class="textarea-input" 
+                  placeholder="Add a custom message for the mentor...">Thank you for your contribution to our platform!</textarea>
+        
+        <button onclick="generateReceipt()" class="generate-btn">
+          <i class="fas fa-file-invoice-dollar"></i> Generate Receipt
+        </button>
+      </div>
+      
+      <!-- Receipt Preview -->
+      <div class="receipt-section">
+        <div id="receipt-content" class="receipt-preview">
+          <div class="receipt-header">
+            <h3 class="receipt-title">EdTech Platform <i class="fas fa-graduation-cap"></i></h3>
+            <p class="receipt-subtitle">Payment Receipt</p>
+            <p class="receipt-date">Date: <span id="receipt-date">--/--/----</span></p>
+          </div>
+          
+          <div class="mentor-info">
+            <div class="info-row">
+              <span class="info-label">Mentor:</span>
+              <span id="receipt-mentor">[Mentor Name]</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Email:</span>
+              <span id="receipt-email">[Mentor Email]</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Sessions:</span>
+              <span id="receipt-session-count">0</span>
+            </div>
+          </div>
+          
+          <table class="receipt-table">
+            <thead>
+              <tr>
+                <th>Session Description</th>
+                <th class="text-right">Duration</th>
+                <th class="text-right">Rate</th>
+                <th class="text-right">Amount</th>
+              </tr>
+            </thead>
+            <tbody id="receipt-sessions">
+              <!-- Sessions will be added here dynamically -->
+            </tbody>
+          </table>
+          
+          <div class="totals-section">
+            <div class="total-row">
+              <span>Subtotal:</span>
+              <span id="receipt-subtotal">$0.00</span>
+            </div>
+            <div class="total-row platform-fee">
+              <span>Platform Fee (10%):</span>
+              <span id="receipt-platform-fee">+$0.00</span>
+            </div>
+            <div class="total-row tax">
+              <span>GST (18%):</span>
+              <span id="receipt-tax">+$0.00</span>
+            </div>
+            <div class="total-row grand-total">
+              <span>Total Payout:</span>
+              <span id="receipt-total">$0.00</span>
+            </div>
+          </div>
+          
+          <div id="receipt-custom-message" class="custom-message">
+            [Custom message will appear here]
+          </div>
+        </div>
+        
+        <div class="action-buttons">
+          <button onclick="printReceipt()" class="action-btn print-btn">
+            <i class="fas fa-print"></i> Print Receipt
+          </button>
+          <button onclick="sendReceipt()" class="action-btn send-btn">
+            <i class="fas fa-paper-plane"></i> Send via Email
+          </button>
+          <button onclick="downloadReceipt()" class="action-btn download-btn">
+            <i class="fas fa-download"></i> Download PDF
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Additional Visualization -->
+    <div class="visualization-section" style="margin-top: 30px; background: white; padding: 20px; border-radius: 8px;">
+      <h3><i class="fas fa-chart-pie"></i> Payout Breakdown</h3>
+      <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 300px;">
+          <canvas id="payoutChart" height="250"></canvas>
+        </div>
+        <div style="flex: 1; min-width: 300px;">
+          <canvas id="sessionChart" height="250"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="button-footer">
+    <div class="footer-container">
+      <div class="button-group">
+        <button class="nav-btn prev-btn" onclick="goPrevious()">
+          <i class="fas fa-arrow-left"></i> Previous Page
+        </button>
+
+        <button class="nav-btn home-btn" onclick="goHome()">
+          <i class="fas fa-home"></i> Home
+        </button>
+
+        <button class="nav-btn next-btn" onclick="goNext()">
+          Next Page <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+
+      <div class="footer-info">
+        <p>EdTech Payout System v2.0</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Sample data for mentors and sessions
+    const mentorData = {
+      "mentor1@example.com": {
+        name: "John Doe",
+        sessions: [
+          { description: "Math Tutoring Session", duration: "1 hour", rate: 50, amount: 50, date: "2023-05-01" },
+          { description: "Advanced Calculus", duration: "1.5 hours", rate: 60, amount: 90, date: "2023-05-08" },
+          { description: "Geometry Basics", duration: "1 hour", rate: 50, amount: 50, date: "2023-05-15" }
+        ],
+        totalPayouts: 1900,
+        sessionsCompleted: 24
+      },
+      "mentor2@example.com": {
+        name: "Jane Smith",
+        sessions: [
+          { description: "Science Workshop", duration: "2 hours", rate: 60, amount: 120, date: "2023-05-03" },
+          { description: "Chemistry Lab", duration: "1 hour", rate: 45, amount: 45, date: "2023-05-10" }
+        ],
+        totalPayouts: 1320,
+        sessionsCompleted: 15
+      },
+      "mentor3@example.com": {
+        name: "Robert Johnson",
+        sessions: [
+          { description: "Programming Fundamentals", duration: "2 hours", rate: 70, amount: 140, date: "2023-05-05" },
+          { description: "Web Development", duration: "1 hour", rate: 65, amount: 65, date: "2023-05-12" },
+          { description: "Database Design", duration: "1.5 hours", rate: 75, amount: 112.5, date: "2023-05-19" }
+        ],
+        totalPayouts: 2100,
+        sessionsCompleted: 28
+      },
+      "mentor4@example.com": {
+        name: "Sarah Williams",
+        sessions: [
+          { description: "English Literature", duration: "1 hour", rate: 55, amount: 55, date: "2023-05-07" },
+          { description: "Creative Writing", duration: "1.5 hours", rate: 65, amount: 97.5, date: "2023-05-14" }
+        ],
+        totalPayouts: 980,
+        sessionsCompleted: 12
+      }
+    };
+
+    // Chart instances
+    let mentorChart, payoutChart, sessionChart;
+
+    function generateReceipt() {
+      const mentorSelect = document.getElementById('mentor-select');
+      const mentorEmail = mentorSelect.value;
+      
+      if (!mentorEmail) {
+        alert('Please select a mentor first');
+        return;
+      }
+      
+      const mentor = mentorData[mentorEmail];
+      if (!mentor) return;
+      
+      // Update receipt header
+      document.getElementById('receipt-mentor').textContent = mentor.name;
+      document.getElementById('receipt-email').textContent = mentorEmail;
+      document.getElementById('receipt-date').textContent = new Date().toLocaleDateString();
+      document.getElementById('receipt-session-count').textContent = mentor.sessions.length;
+      
+      // Generate session rows
+      let sessionsHTML = '';
+      let subtotal = 0;
+      
+      mentor.sessions.forEach(session => {
+        sessionsHTML += `
+          <tr>
+            <td>${session.description}</td>
+            <td class="text-right">${session.duration}</td>
+            <td class="text-right">$${session.rate.toFixed(2)}</td>
+            <td class="text-right">$${session.amount.toFixed(2)}</td>
+          </tr>
+        `;
+        subtotal += session.amount;
+      });
+      
+      document.getElementById('receipt-sessions').innerHTML = sessionsHTML;
+      
+      // Calculate totals
+      const platformFee = subtotal * 0.10;
+      const tax = (subtotal + platformFee) * 0.18;
+      const total = subtotal + platformFee + tax;
+      
+      // Update totals
+      document.getElementById('receipt-subtotal').textContent = `$${subtotal.toFixed(2)}`;
+      document.getElementById('receipt-platform-fee').textContent = `+$${platformFee.toFixed(2)}`;
+      document.getElementById('receipt-tax').textContent = `+$${tax.toFixed(2)}`;
+      document.getElementById('receipt-total').textContent = `$${total.toFixed(2)}`;
+      
+      // Update custom message
+      const customMessage = document.getElementById('receipt-message').value;
+      document.getElementById('receipt-custom-message').textContent = customMessage || 'Thank you for your contribution to our platform!';
+      
+      // Show mentor stats
+      document.getElementById('mentor-stats').style.display = 'block';
+      updateMentorChart(mentor);
+      updateVisualizationCharts(mentor);
+    }
+
+    function updateMentorChart(mentor) {
+      const ctx = document.getElementById('mentorChart').getContext('2d');
+      
+      if (mentorChart) {
+        mentorChart.destroy();
+      }
+      
+      mentorChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['This Month', 'Total Sessions', 'Total Payouts'],
+          datasets: [{
+            label: 'Mentor Performance',
+            data: [mentor.sessions.length, mentor.sessionsCompleted, mentor.totalPayouts],
+            backgroundColor: [
+              'rgba(54, 162, 235, 0.7)',
+              'rgba(75, 192, 192, 0.7)',
+              'rgba(153, 102, 255, 0.7)'
+            ],
+            borderColor: [
+              'rgba(54, 162, 235, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(153, 102, 255, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+
+    function updateVisualizationCharts(mentor) {
+      // Payout Breakdown Chart
+      const payoutCtx = document.getElementById('payoutChart').getContext('2d');
+      const subtotal = mentor.sessions.reduce((sum, session) => sum + session.amount, 0);
+      const platformFee = subtotal * 0.10;
+      const tax = (subtotal + platformFee) * 0.18;
+      
+      if (payoutChart) {
+        payoutChart.destroy();
+      }
+      
+      payoutChart = new Chart(payoutCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Mentor Earnings', 'Platform Fee', 'Tax'],
+          datasets: [{
+            data: [subtotal, platformFee, tax],
+            backgroundColor: [
+              'rgba(75, 192, 192, 0.7)',
+              'rgba(255, 159, 64, 0.7)',
+              'rgba(255, 99, 132, 0.7)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            },
+            title: {
+              display: true,
+              text: 'Payout Distribution'
+            }
+          }
+        }
+      });
+      
+      // Session Types Chart
+      const sessionCtx = document.getElementById('sessionChart').getContext('2d');
+      const sessionTypes = {};
+      
+      mentor.sessions.forEach(session => {
+        const type = session.description.split(' ')[0];
+        sessionTypes[type] = (sessionTypes[type] || 0) + 1;
+      });
+      
+      if (sessionChart) {
+        sessionChart.destroy();
+      }
+      
+      sessionChart = new Chart(sessionCtx, {
+        type: 'pie',
+        data: {
+          labels: Object.keys(sessionTypes),
+          datasets: [{
+            data: Object.values(sessionTypes),
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.7)',
+              'rgba(54, 162, 235, 0.7)',
+              'rgba(255, 206, 86, 0.7)',
+              'rgba(75, 192, 192, 0.7)',
+              'rgba(153, 102, 255, 0.7)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            },
+            title: {
+              display: true,
+              text: 'Session Types'
+            }
+          }
+        }
+      });
+    }
+
+    function printReceipt() {
+      const receiptContent = document.getElementById('receipt-content').innerHTML;
+      const originalContent = document.body.innerHTML;
+      
+      document.body.innerHTML = `
+        <div style="max-width:800px; margin:0 auto; padding:20px;">
+          ${receiptContent}
+        </div>
+      `;
+      window.print();
+      document.body.innerHTML = originalContent;
+    }
+
+    function sendReceipt() {
+      const mentorEmail = document.getElementById('mentor-select').value;
+      if (!mentorEmail) {
+        alert('Please generate a receipt first');
+        return;
+      }
+      
+      // Simulate sending
+      const mentorName = document.getElementById('receipt-mentor').textContent;
+      alert(`Receipt sent to ${mentorName} (${mentorEmail}) successfully!`);
+      
+      // Log this action
+      console.log(`Receipt sent to ${mentorEmail} at ${new Date().toISOString()}`);
+    }
+
+    function downloadReceipt() {
+      alert('PDF download would be implemented with a library like jsPDF or a server endpoint');
+      // In a real implementation, this would generate a PDF using jsPDF or similar
+    }
+
+    // Navigation functions
+    function goPrevious() { window.location.href = "payout_configuration.html"; }
+    function goHome() { window.location.href = "session_management.html"; }
+    function goNext() { window.location.href = "admin-chat.html"; }
+    function logout() { window.location.href = 'index.html'; }
+
+    // Initialize with first mentor's data
+    window.onload = function() {
+      document.getElementById('mentor-select').addEventListener('change', function() {
+        if (this.value) {
+          generateReceipt();
+        } else {
+          document.getElementById('mentor-stats').style.display = 'none';
+        }
+      });
+      
+      // Load first mentor by default
+      document.getElementById('mentor-select').value = "mentor1@example.com";
+      generateReceipt();
+    };
+  </script>
+</body>
+</html>

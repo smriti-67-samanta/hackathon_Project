@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EdTech Mentor Receipts</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="header.css">
+    <link rel="stylesheet" href="/admin-css/footer.css" />
+    <!-- Include jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <style>
+      /* Reset and Base Styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #f0f2f5, #dfe9f3);
+        color: #333;
+        line-height: 1.6;
+      }
+
+      /* Header Styles */
+      header {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        transition: all 0.3s ease-in-out;
+      }
+
+      .container {
+        width: 90%;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #1f2937;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .logout-btn {
+        background: linear-gradient(to right, #ff416c, #ff4b2b);
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.2s ease, background 0.3s ease;
+        font-weight: 500;
+      }
+
+      .logout-btn:hover {
+        transform: scale(1.05);
+        background: linear-gradient(to right, #ff4b2b, #ff416c);
+      }
+
+      /* Navigation Tabs */
+      .tabs-container {
+        background-color: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        border-radius: 12px 12px 0 0;
+        margin-top: 1.5rem;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      .tabs {
+        display: flex;
+        flex-wrap: wrap;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+      }
+
+      .tab {
+        padding: 12px 20px;
+        text-decoration: none;
+        color: #374151;
+        font-weight: 500;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        margin: 0 4px;
+        display: flex;
+        align-items: center;
+      }
+
+      .tab:hover {
+        background: rgba(0, 0, 0, 0.05);
+        transform: translateY(-2px);
+      }
+
+      .tab.active {
+        background: linear-gradient(to right, #4facfe, #00f2fe);
+        color: white;
+        box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
+      }
+
+      .tab i {
+        margin-right: 8px;
+      }
+
+      /* Main Content */
+      .main-content {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        padding: 2rem;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+        animation: fadeInUp 0.4s ease both;
+      }
+
+      h2 {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        color: #1f2937;
+        font-weight: 600;
+      }
+
+      /* Filter Options */
+      .filter-container {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(8px);
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+
+      .filter-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+        margin-bottom: 1.25rem;
+      }
+
+      @media (min-width: 768px) {
+        .filter-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      label {
+        display: block;
+        font-size: 0.875rem;
+        color: #374151;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+
+      select,
+      input[type="date"],
+      input[type="text"] {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        font-size: 0.875rem;
+        background: rgba(255, 255, 255, 0.8);
+        transition: all 0.3s ease;
+      }
+
+      select:focus,
+      input[type="date"]:focus,
+      input[type="text"]:focus {
+        border-color: #4facfe;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2);
+      }
+
+      .export-btn {
+        background: linear-gradient(to right, #43e97b, #38f9d7);
+        color: white;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .export-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(67, 233, 123, 0.3);
+      }
+
+      /* Tables */
+      .table-container {
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        margin-bottom: 2rem;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: rgba(255, 255, 255, 0.6);
+      }
+
+      th,
+      td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      th {
+        background: rgba(255, 255, 255, 0.8);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: #6b7280;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+
+      .status-completed {
+        background-color: #dcfce7;
+        color: #166534;
+      }
+
+      .status-pending {
+        background-color: #fef9c3;
+        color: #854d0e;
+      }
+
+      .status-failed {
+        background-color: #fee2e2;
+        color: #991b1b;
+      }
+
+      .action-btn {
+        color: #3b82f6;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 0.875rem;
+        margin-right: 1rem;
+        transition: all 0.2s ease;
+      }
+
+      .action-btn:hover {
+        color: #2563eb;
+      }
+
+      .action-btn i {
+        margin-right: 4px;
+      }
+
+      /* Pagination */
+      .pagination {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+      }
+
+      .pagination-info {
+        font-size: 0.875rem;
+        color: #6b7280;
+      }
+
+      .pagination-buttons {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .page-btn {
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        transition: all 0.3s ease;
+      }
+
+      .page-btn-primary {
+        background: linear-gradient(to right, #4facfe, #00f2fe);
+        color: white;
+      }
+
+      .page-btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(79, 172, 254, 0.3);
+      }
+
+      .page-btn:disabled {
+        background: rgba(0, 0, 0, 0.05);
+        color: #9ca3af;
+        cursor: not-allowed;
+      }
+
+      /* Modal */
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+
+      .modal-content {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(12px);
+        border-radius: 16px;
+        width: 90%;
+        max-width: 900px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        animation: modalFadeIn 0.3s ease-out;
+      }
+
+      .modal-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+
+      .modal-title {
+        font-size: 1.25rem;
+        color: #1f2937;
+        font-weight: 600;
+      }
+
+      .close-btn {
+        background: none;
+        border: none;
+        color: #9ca3af;
+        cursor: pointer;
+        font-size: 1.5rem;
+        transition: color 0.2s ease;
+      }
+
+      .close-btn:hover {
+        color: #6b7280;
+      }
+
+      .modal-body {
+        padding: 1.5rem;
+      }
+
+      .receipt-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      @media (min-width: 768px) {
+        .receipt-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      .modal-footer {
+        padding: 1.25rem;
+        background: rgba(249, 250, 251, 0.7);
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        border-radius: 0 0 16px 16px;
+      }
+
+      .btn {
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: none;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary {
+        background: linear-gradient(to right, #4facfe, #00f2fe);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(79, 172, 254, 0.3);
+      }
+
+      .btn-secondary {
+        background: rgba(0, 0, 0, 0.05);
+        color: #374151;
+      }
+
+      .btn-secondary:hover {
+        background: rgba(0, 0, 0, 0.1);
+      }
+
+      /* Utility Classes */
+      .hidden {
+        display: none;
+      }
+
+      .flex-row {
+        display: flex;
+        flex-direction: row;
+      }
+
+      .flex-col {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .items-center {
+        align-items: center;
+      }
+
+      .justify-between {
+        justify-content: space-between;
+      }
+
+      .gap-4 {
+        gap: 1rem;
+      }
+
+      .w-full {
+        width: 100%;
+      }
+
+      /* Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes modalFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Navigation Bar -->
+    <header class="etm-header">
+      <div class="etm-header-container">
+        <div class="etm-header-content">
+          <div class="etm-logo">EdTech Mentor Dashboard</div>
+          <div class="etm-user-info">
+            <span>Welcome, <span id="etm-mentor-name">Mentor</span>!</span>
+            <div class="etm-notification-tooltip">
+              <i class="fas fa-bell" style="font-size: 1.2rem; margin-right: 1rem;"></i>
+              <span class="etm-notification-badge pulse">3</span>
+            </div>
+            <button onclick="logout()" class="etm-logout-btn">Logout</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mentor Navigation Tabs -->
+    <div class="container tabs-container">
+      <div class="tabs">
+        <a href="mentor-dashboard.html" class="tab">
+          <i class="fas fa-tachometer-alt"></i>Dashboard
+        </a>
+        <a href="mentor-sessions.html" class="tab">
+          <i class="fas fa-calendar-check"></i>My Sessions
+        </a>
+        <a href="mentor-receipts.html" class="tab active">
+          <i class="fas fa-file-invoice-dollar"></i>Receipts
+        </a>
+        <a href="mentor-chat.html" class="tab">
+          <i class="fas fa-comments"></i>Chat with Admin
+        </a>
+      </div>
+    </div>
+
+    <!-- Receipts Content -->
+    <div class="container main-content">
+      <h2>Receipts Management</h2>
+
+      <!-- Filters and Search -->
+      <div class="filter-container">
+        <div class="filter-grid">
+          <div class="form-group">
+            <label>Filter by Status</label>
+            <select id="status-filter">
+              <option value="all">All Statuses</option>
+              <option value="completed">Completed</option>
+              <option value="pending">Pending</option>
+              <option value="failed">Failed</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Date Range</label>
+            <select id="date-filter">
+              <option value="all">All Time</option>
+              <option value="this-month">This Month</option>
+              <option value="last-month">Last Month</option>
+              <option value="custom">Custom Range</option>
+            </select>
+          </div>
+          <div id="custom-date-range" class="hidden flex-row gap-4">
+            <div class="form-group w-full">
+              <label>Start Date</label>
+              <input type="date" id="start-date" />
+            </div>
+            <div class="form-group w-full">
+              <label>End Date</label>
+              <input type="date" id="end-date" />
+            </div>
+          </div>
+        </div>
+        <div class="flex-row gap-4 items-center">
+          <div class="form-group">
+            <label>Search Receipt ID</label>
+            <input
+              type="text"
+              id="search-receipt"
+              placeholder="Enter Receipt ID"
+            />
+          </div>
+          <button onclick="exportReceiptsCSV()" class="export-btn">
+            <i class="fas fa-file-export"></i>Export as CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- Receipts Table -->
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Receipt ID</th>
+              <th>Date</th>
+              <th>Period</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="receipts-table-body">
+            <!-- Sample data (will be populated dynamically) -->
+            <tr>
+              <td>REC-12345</td>
+              <td>May 5, 2023</td>
+              <td>Apr 1 - Apr 30, 2023</td>
+              <td>$1,250.00</td>
+              <td>
+                <span class="status-badge status-completed">Completed</span>
+              </td>
+              <td>
+                <button class="action-btn" onclick="viewReceipt('12345')">
+                  <i class="fas fa-eye"></i>View
+                </button>
+                <button class="action-btn" onclick="downloadReceipt('12345')">
+                  <i class="fas fa-download"></i>Download
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>REC-12344</td>
+              <td>Apr 5, 2023</td>
+              <td>Mar 1 - Mar 31, 2023</td>
+              <td>$980.00</td>
+              <td>
+                <span class="status-badge status-completed">Completed</span>
+              </td>
+              <td>
+                <button class="action-btn" onclick="viewReceipt('12344')">
+                  <i class="fas fa-eye"></i>View
+                </button>
+                <button class="action-btn" onclick="downloadReceipt('12344')">
+                  <i class="fas fa-download"></i>Download
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>REC-12343</td>
+              <td>Mar 5, 2023</td>
+              <td>Feb 1 - Feb 28, 2023</td>
+              <td>$1,100.00</td>
+              <td><span class="status-badge status-pending">Pending</span></td>
+              <td>
+                <button class="action-btn" onclick="viewReceipt('12343')">
+                  <i class="fas fa-eye"></i>View
+                </button>
+                <button class="action-btn" onclick="downloadReceipt('12343')">
+                  <i class="fas fa-download"></i>Download
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination">
+        <div class="pagination-info">
+          Showing <span id="page-start">1</span> to
+          <span id="page-end">3</span> of
+          <span id="total-receipts">3</span> receipts
+        </div>
+        <div class="pagination-buttons">
+          <button id="prev-page" class="page-btn page-btn-primary" disabled>
+            Previous
+          </button>
+          <button id="next-page" class="page-btn page-btn-primary" disabled>
+            Next
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div id="receipt-modal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <h3 class="modal-title">Receipt Details</h3>
+          </div>
+          <button onclick="closeReceiptModal()" class="close-btn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div id="receipt-modal-content">
+            <!-- Receipt content will be loaded here -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            onclick="downloadReceipt(currentReceiptId)"
+            class="btn btn-primary"
+          >
+            <i class="fas fa-download"></i>Download PDF
+          </button>
+          <button onclick="closeReceiptModal()" class="btn btn-secondary">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="button-footer">
+      <div class="footer-container">
+        <div class="button-group">
+          <button class="nav-btn prev-btn" onclick="goPrevious()">
+            ← Previous Page
+          </button>
+
+          <button class="nav-btn home-btn" onclick="goHome()">🏠 Home</button>
+
+          <button class="nav-btn next-btn" onclick="goNext()">
+            Next Page →
+          </button>
+        </div>
+
+        <div class="footer-info"></div>
+      </div>
+    </footer>
+
+    <script>
+      function goPrevious() {
+        window.location.href = "mentor-sessions.html";
+      }
+      function goHome() {
+        window.location.href = "mentor-dashboard.html";
+      }
+      function goNext() {
+        window.location.href = "mentor-chat.html";
+      }
+    </script>
+
+    <script>
+      // Sample data for receipts (in a real app, this would come from a server)
+      const receipts = [
+        {
+          id: "12345",
+          date: "May 5, 2023",
+          period: "Apr 1 - Apr 30, 2023",
+          amount: 1250.0,
+          status: "Completed",
+          details: {
+            mentor: "John Doe",
+            mentorId: "MENT-78945",
+            sessions: [
+              { type: "Regular Sessions", quantity: 12, amount: 600.0 },
+              { type: "Workshop Sessions", quantity: 4, amount: 400.0 },
+              { type: "1-on-1 Sessions", quantity: 8, amount: 250.0 },
+            ],
+            subtotal: 1250.0,
+            tax: 0.0,
+            total: 1250.0,
+            paymentMethod: "Direct Deposit",
+            transactionId: "TXN-12345",
+          },
+        },
+        {
+          id: "12344",
+          date: "Apr 5, 2023",
+          period: "Mar 1 - Mar 31, 2023",
+          amount: 980.0,
+          status: "Completed",
+          details: {
+            mentor: "John Doe",
+            mentorId: "MENT-78945",
+            sessions: [
+              { type: "Regular Sessions", quantity: 10, amount: 500.0 },
+              { type: "Workshop Sessions", quantity: 3, amount: 300.0 },
+              { type: "1-on-1 Sessions", quantity: 4, amount: 180.0 },
+            ],
+            subtotal: 980.0,
+            tax: 0.0,
+            total: 980.0,
+            paymentMethod: "Direct Deposit",
+            transactionId: "TXN-12344",
+          },
+        },
+        {
+          id: "12343",
+          date: "Mar 5, 2023",
+          period: "Feb 1 - Feb 28, 2023",
+          amount: 1100.0,
+          status: "Pending",
+          details: {
+            mentor: "John Doe",
+            mentorId: "MENT-78945",
+            sessions: [
+              { type: "Regular Sessions", quantity: 15, amount: 750.0 },
+              { type: "Workshop Sessions", quantity: 2, amount: 200.0 },
+              { type: "1-on-1 Sessions", quantity: 5, amount: 150.0 },
+            ],
+            subtotal: 1100.0,
+            tax: 0.0,
+            total: 1100.0,
+            paymentMethod: "Direct Deposit",
+            transactionId: "TXN-12343",
+          },
+        },
+      ];
+
+      let currentReceiptId = null;
+      let currentPage = 1;
+      const receiptsPerPage = 5;
+
+      // Initialize page
+      document.addEventListener("DOMContentLoaded", () => {
+        renderReceipts();
+        setupEventListeners();
+        updateMentorName();
+      });
+
+      function updateMentorName() {
+        // In a real app, fetch from user session
+        document.getElementById("mentor-name").textContent = "John Doe";
+      }
+
+      function setupEventListeners() {
+        document
+          .getElementById("date-filter")
+          .addEventListener("change", handleDateFilterChange);
+        document
+          .getElementById("status-filter")
+          .addEventListener("change", renderReceipts);
+        document
+          .getElementById("search-receipt")
+          .addEventListener("input", renderReceipts);
+        document
+          .getElementById("start-date")
+          .addEventListener("change", renderReceipts);
+        document
+          .getElementById("end-date")
+          .addEventListener("change", renderReceipts);
+        document.getElementById("prev-page").addEventListener("click", () => {
+          if (currentPage > 1) {
+            currentPage--;
+            renderReceipts();
+          }
+        });
+        document.getElementById("next-page").addEventListener("click", () => {
+          const maxPage = Math.ceil(
+            getFilteredReceipts().length / receiptsPerPage
+          );
+          if (currentPage < maxPage) {
+            currentPage++;
+            renderReceipts();
+          }
+        });
+      }
+
+      function handleDateFilterChange() {
+        const dateFilter = document.getElementById("date-filter").value;
+        const customDateRange = document.getElementById("custom-date-range");
+        if (dateFilter === "custom") {
+          customDateRange.classList.remove("hidden");
+        } else {
+          customDateRange.classList.add("hidden");
+        }
+        renderReceipts();
+      }
+
+      function getFilteredReceipts() {
+        let filtered = [...receipts];
+
+        // Filter by status
+        const statusFilter = document.getElementById("status-filter").value;
+        if (statusFilter !== "all") {
+          filtered = filtered.filter(
+            (receipt) => receipt.status.toLowerCase() === statusFilter
+          );
+        }
+
+        // Filter by date range
+        const dateFilter = document.getElementById("date-filter").value;
+        const today = new Date();
+        if (dateFilter === "this-month") {
+          const startOfMonth = new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            1
+          );
+          filtered = filtered.filter(
+            (receipt) => new Date(receipt.date) >= startOfMonth
+          );
+        } else if (dateFilter === "last-month") {
+          const startOfLastMonth = new Date(
+            today.getFullYear(),
+            today.getMonth() - 1,
+            1
+          );
+          const endOfLastMonth = new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            0
+          );
+          filtered = filtered.filter((receipt) => {
+            const receiptDate = new Date(receipt.date);
+            return (
+              receiptDate >= startOfLastMonth && receiptDate <= endOfLastMonth
+            );
+          });
+        } else if (dateFilter === "custom") {
+          const startDate = document.getElementById("start-date").value;
+          const endDate = document.getElementById("end-date").value;
+          if (startDate && endDate) {
+            filtered = filtered.filter((receipt) => {
+              const receiptDate = new Date(receipt.date);
+              return (
+                receiptDate >= new Date(startDate) &&
+                receiptDate <= new Date(endDate)
+              );
+            });
+          }
+        }
+
+        // Filter by search
+        const searchQuery = document
+          .getElementById("search-receipt")
+          .value.toLowerCase();
+        if (searchQuery) {
+          filtered = filtered.filter((receipt) =>
+            receipt.id.toLowerCase().includes(searchQuery)
+          );
+        }
+
+        return filtered;
+      }
+
+      function renderReceipts() {
+        const tbody = document.getElementById("receipts-table-body");
+        const filteredReceipts = getFilteredReceipts();
+        const start = (currentPage - 1) * receiptsPerPage;
+        const end = start + receiptsPerPage;
+        const paginatedReceipts = filteredReceipts.slice(start, end);
+
+        tbody.innerHTML = "";
+        paginatedReceipts.forEach((receipt) => {
+          const statusClass =
+            receipt.status === "Completed"
+              ? "status-completed"
+              : receipt.status === "Pending"
+              ? "status-pending"
+              : "status-failed";
+          tbody.innerHTML += `
+          <tr>
+            <td>REC-${receipt.id}</td>
+            <td>${receipt.date}</td>
+            <td>${receipt.period}</td>
+            <td>$${receipt.amount.toFixed(2)}</td>
+            <td><span class="status-badge ${statusClass}">${
+            receipt.status
+          }</span></td>
+            <td>
+              <button class="action-btn" onclick="viewReceipt('${receipt.id}')">
+                <i class="fas fa-eye"></i>View
+              </button>
+              <button class="action-btn" onclick="downloadReceipt('${
+                receipt.id
+              }')">
+                <i class="fas fa-download"></i>Download
+              </button>
+            </td>
+          </tr>
+        `;
+        });
+
+        // Update pagination
+        const totalReceipts = filteredReceipts.length;
+        document.getElementById("page-start").textContent = start + 1;
+        document.getElementById("page-end").textContent = Math.min(
+          end,
+          totalReceipts
+        );
+        document.getElementById("total-receipts").textContent = totalReceipts;
+        document.getElementById("prev-page").disabled = currentPage === 1;
+        document.getElementById("next-page").disabled = end >= totalReceipts;
+      }
+
+      function viewReceipt(receiptId) {
+        currentReceiptId = receiptId;
+        const receipt = receipts.find((r) => r.id === receiptId);
+        if (!receipt) return;
+
+        const sessionRows = receipt.details.sessions
+          .map(
+            (session) => `
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; padding: 0.5rem 0;">
+          <p>${session.type}</p>
+          <p style="text-align: center;">${session.quantity}</p>
+          <p style="text-align: right;">$${session.amount.toFixed(2)}</p>
+        </div>
+      `
+          )
+          .join("");
+
+        const receiptContent = `
+        <div>
+          <div style="text-align: center; margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.5rem; font-weight: 700; color: #1d4ed8;">EdTech Mentor Payout</h2>
+            <p style="color: #6b7280;">Receipt #REC-${receipt.id}</p>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+            <div>
+              <p style="font-weight: 500;">Mentor:</p>
+              <p>${receipt.details.mentor}</p>
+              <p>ID: ${receipt.details.mentorId}</p>
+            </div>
+            <div style="text-align: right;">
+              <p style="font-weight: 500;">Payment Date:</p>
+              <p>${receipt.date}</p>
+              <p>Period: ${receipt.period}</p>
+            </div>
+          </div>
+          <div style="border-top: 1px solid rgba(0, 0, 0, 0.1); border-bottom: 1px solid rgba(0, 0, 0, 0.1); padding: 1rem 0; margin-bottom: 1rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; font-weight: 500;">
+              <p>Description</p>
+              <p style="text-align: center;">Quantity</p>
+              <p style="text-align: right;">Amount</p>
+            </div>
+          </div>
+          ${sessionRows}
+          <div style="border-top: 1px solid rgba(0, 0, 0, 0.1); padding-top: 1rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr;">
+              <p style="font-weight: 500;">Subtotal:</p>
+              <p style="text-align: right;">$${receipt.details.subtotal.toFixed(
+                2
+              )}</p>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr;">
+              <p style="font-weight: 500;">Tax (0%):</p>
+              <p style="text-align: right;">$${receipt.details.tax.toFixed(
+                2
+              )}</p>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; font-weight: 700; font-size: 1.125rem;">
+              <p>Total:</p>
+              <p style="text-align: right;">$${receipt.details.total.toFixed(
+                2
+              )}</p>
+            </div>
+          </div>
+          <div style="margin-top: 2rem; font-size: 0.875rem; color: #6b7280;">
+            <p>Payment method: ${receipt.details.paymentMethod}</p>
+            <p>Transaction ID: ${receipt.details.transactionId}</p>
+            <p style="margin-top: 0.5rem;">Thank you for your contribution to our educational platform!</p>
+          </div>
+        </div>
+      `;
+
+        document.getElementById("receipt-modal-content").innerHTML =
+          receiptContent;
+        document.getElementById("receipt-modal").style.display = "flex";
+      }
+
+      function closeReceiptModal() {
+        document.getElementById("receipt-modal").style.display = "none";
+        currentReceiptId = null;
+      }
+
+      function downloadReceipt(receiptId) {
+        // In a real app, this would generate and download a PDF
+        console.log(`Downloading receipt ${receiptId}...`);
+        alert(`Receipt REC-${receiptId} download started (simulated)`);
+      }
+
+      function exportReceiptsCSV() {
+        const filteredReceipts = getFilteredReceipts();
+        const headers = ["Receipt ID", "Date", "Period", "Amount", "Status"];
+        const rows = filteredReceipts.map((receipt) => [
+          `REC-${receipt.id}`,
+          receipt.date,
+          receipt.period,
+          `$${receipt.amount.toFixed(2)}`,
+          receipt.status,
+        ]);
+
+        const csvContent = [
+          headers.join(","),
+          ...rows.map((row) => row.join(",")),
+        ].join("\n");
+
+        const blob = new Blob([csvContent], {
+          type: "text/csv;charset=utf-8;",
+        });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", "receipts_export.csv");
+        link.style.visibility = "hidden";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      function logout() {
+        // Logout logic
+        console.log("Logging out...");
+        window.location.href = "../index.html";
+      }
+    </script>
+  </body>
+</html>

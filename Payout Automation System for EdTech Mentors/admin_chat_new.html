@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EdTech Payout System - Mentor Communication</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="admin-css/footer.css">
+  <link rel="stylesheet" href="mentor-dashboard/header.css">
+  <style>
+    /* Reset and Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: all 0.3s ease-in-out;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f7fa 100%);
+      color: #1e293b;
+      line-height: 1.6;
+    }
+    
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    /* Navigation Bar */
+    .nav {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #1f2937;
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .logout-btn {
+      background: linear-gradient(to right, #ff416c, #ff4b2b);
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.3s ease;
+      font-weight: 500;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .logout-btn:hover {
+      transform: scale(1.05);
+      background: linear-gradient(to right, #ff4b2b, #ff416c);
+    }
+    
+    .logout-btn::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0.4) 0%,
+        rgba(255, 255, 255, 0.1) 40%,
+        transparent 80%
+      );
+      transform: rotate(30deg);
+      animation: sheen 3s infinite;
+    }
+    
+    @keyframes sheen {
+      0% {
+        left: -75%;
+      }
+      100% {
+        left: 125%;
+      }
+    }
+    
+    /* Navigation Tabs */
+    .tabs-container {
+      background-color: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      border-radius: 12px 12px 0 0;
+      margin-top: 1.5rem;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    }
+    
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    
+    .tab {
+      padding: 12px 20px;
+      text-decoration: none;
+      color: #374151;
+      font-weight: 500;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      margin: 0 4px;
+    }
+    
+    .tab:hover {
+      background: rgba(0, 0, 0, 0.05);
+      transform: translateY(-2px);
+    }
+    
+    .tab.active {
+      background: linear-gradient(to right, #4facfe, #00f2fe);
+      color: white;
+      box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
+    }
+    
+    /* Main Content */
+    .main-content {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      padding: 2rem;
+      border-radius: 0 0 12px 12px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+      animation: fadeInUp 0.4s ease both;
+    }
+    
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      color: #1f2937;
+      font-weight: 600;
+    }
+    
+    /* Chat Layout */
+    .chat-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    
+    @media (min-width: 992px) {
+      .chat-grid {
+        grid-template-columns: 1fr 3fr;
+      }
+    }
+    
+    /* Mentor List */
+    .mentor-list {
+      background: rgba(249, 250, 251, 0.7);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      padding: 1.5rem;
+    }
+    
+    .search-container {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+      border: 1px solid rgba(209, 213, 219, 0.8);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.8);
+      font-size: 0.875rem;
+      transition: all 0.3s ease;
+    }
+    
+    .search-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+    }
+    
+    .mentor-container {
+      max-height: 500px;
+      overflow-y: auto;
+    }
+    
+    /* Mentor Item */
+    .mentor-item {
+      padding: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 0.5rem;
+      transition: all 0.3s ease;
+    }
+    
+    .mentor-item:hover {
+      background-color: rgba(219, 234, 254, 0.5);
+    }
+    
+    .mentor-item.active {
+      background-color: rgba(219, 234, 254, 0.8);
+      border-left: 4px solid #3b82f6;
+    }
+    
+    .mentor-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 0.75rem;
+      font-weight: 500;
+    }
+    
+    .mentor-name {
+      font-weight: 500;
+    }
+    
+    .mentor-id {
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+    
+    .mentor-preview {
+      font-size: 0.75rem;
+      color: #6b7280;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .mentor-time {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      text-align: right;
+    }
+    
+    /* Chat Area */
+    .chat-area {
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    
+    .chat-header {
+      border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+    }
+    
+    .chat-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 0.75rem;
+      background-color: rgba(191, 219, 254, 0.8);
+      color: #1e40af;
+      font-weight: 500;
+    }
+    
+    .chat-name {
+      font-weight: 500;
+    }
+    
+    .chat-id {
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+    
+    .chat-status {
+      font-size: 0.75rem;
+      background-color: rgba(220, 252, 231, 0.8);
+      color: #166534;
+      padding: 0.25rem 0.5rem;
+      border-radius: 999px;
+      margin-right: 0.5rem;
+    }
+    
+    .chat-menu {
+      color: #3b82f6;
+      cursor: pointer;
+    }
+    
+    .chat-menu:hover {
+      color: #2563eb;
+    }
+    
+    /* Messages Container */
+    .messages-container {
+      padding: 1.5rem;
+      height: 500px;
+      overflow-y: auto;
+      background-color: rgba(249, 250, 251, 0.8);
+    }
+    
+    .date-divider {
+      display: flex;
+      align-items: center;
+      margin: 1rem 0;
+    }
+    
+    .date-line {
+      flex-grow: 1;
+      border-top: 1px solid rgba(209, 213, 219, 0.8);
+    }
+    
+    .date-text {
+      font-size: 0.75rem;
+      color: #6b7280;
+      margin: 0 1rem;
+    }
+    
+    /* Message Bubbles */
+    .message {
+      max-width: 80%;
+      margin-bottom: 1rem;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      font-size: 0.875rem;
+      position: relative;
+    }
+    
+    .message-admin {
+      background-color: rgba(219, 234, 254, 0.8);
+      margin-left: auto;
+      border-top-right-radius: 0;
+    }
+    
+    .message-mentor {
+      background-color: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(229, 231, 235, 0.8);
+      margin-right: auto;
+      border-top-left-radius: 0;
+    }
+    
+    .message-time {
+      font-size: 0.75rem;
+      color: #6b7280;
+      text-align: right;
+      margin-top: 0.25rem;
+    }
+    
+    .message-details {
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 8px;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      font-size: 0.75rem;
+    }
+    
+    /* Message Input */
+    .message-input-container {
+      border-top: 1px solid rgba(229, 231, 235, 0.8);
+      padding: 1rem 1.5rem;
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .input-group {
+      display: flex;
+      align-items: center;
+    }
+    
+    .attachment-btn {
+      color: #6b7280;
+      margin-right: 0.5rem;
+      cursor: pointer;
+    }
+    
+    .attachment-btn:hover {
+      color: #4b5563;
+    }
+    
+    .message-input {
+      flex-grow: 1;
+      padding: 0.75rem;
+      border: 1px solid rgba(209, 213, 219, 0.8);
+      border-radius: 8px 0 0 8px;
+      font-size: 0.875rem;
+      transition: all 0.3s ease;
+    }
+    
+    .message-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+    
+    .send-btn {
+      background: linear-gradient(to right, #4facfe, #00f2fe);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.25rem;
+      border-radius: 0 8px 8px 0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .send-btn:hover {
+      background: linear-gradient(to right, #3b82f6, #0284c7);
+    }
+    
+    .message-footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.5rem;
+    }
+    
+    .footer-text {
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+    
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navigation Bar -->
+  <header class="etm-header">
+    <div class="etm-header-container">
+      <div class="etm-header-content">
+        <div class="etm-logo">EdTech Mentor Dashboard</div>
+        <div class="etm-user-info">
+          <span>Welcome, <span id="etm-mentor-name">Mentor</span>!</span>
+          <div class="etm-notification-tooltip">
+            <i class="fas fa-bell" style="font-size: 1.2rem; margin-right: 1rem;"></i>
+            <span class="etm-notification-badge pulse">3</span>
+          </div>
+          <button onclick="logout()" class="etm-logout-btn">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Admin Navigation Tabs -->
+  <div class="container tabs-container">
+    <div class="tabs">
+      <a href="session_management.html" class="tab">Session Management</a>
+      <a href="payout_configuration.html" class="tab">Payout Configuration</a>
+      <a href="receipt_generation.html" class="tab">Receipt Generation</a>
+      <a href="admin-chat.html" class="tab active">Mentor Communication</a>
+      <a href="audit-logs.html" class="tab">Audit Trails</a>
+      <a href="test-mode.html" class="tab">Test Mode</a>
+      <a href="data-export.html" class="tab">Data Export & Integration</a>
+    </div>
+  </div>
+
+  <!-- Chat Interface Content -->
+  <div class="container main-content">
+    <h2>Secure Mentor Communication</h2>
+    
+    <div class="chat-grid">
+      <!-- Mentor List -->
+      <div class="mentor-list">
+        <div class="search-container">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" placeholder="Search mentors..." class="search-input" id="mentor-search">
+        </div>
+        
+        <div class="mentor-container" id="mentor-container">
+          <!-- Mentor items will be dynamically populated -->
+        </div>
+      </div>
+      
+      <!-- Chat Area -->
+      <div class="chat-area">
+        <div class="chat-header" id="chat-header">
+          <div class="chat-avatar" id="chat-avatar"></div>
+          <div>
+            <p class="chat-name" id="chat-name">Select a mentor</p>
+            <p class="chat-id" id="chat-id"></p>
+          </div>
+          <div class="ml-auto flex items-center">
+            <span class="chat-status">
+              <i class="fas fa-lock mr-1"></i> Encrypted
+            </span>
+            <i class="fas fa-ellipsis-v chat-menu"></i>
+          </div>
+        </div>
+        
+        <!-- Chat Messages -->
+        <div class="messages-container" id="messages-container">
+          <div class="date-divider">
+            <div class="date-line"></div>
+            <span class="date-text">Select a mentor to start chatting</span>
+            <div class="date-line"></div>
+          </div>
+        </div>
+        
+        <!-- Message Input -->
+        <div class="message-input-container">
+          <div class="input-group">
+            <button class="attachment-btn" onclick="alert('File attachment not implemented')">
+              <i class="fas fa-paperclip"></i>
+            </button>
+            <input type="text" placeholder="Type your message..." class="message-input" id="message-input" disabled>
+            <button class="send-btn" id="send-btn" disabled>
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+          <div class="message-footer">
+            <p class="footer-text">
+              <i class="fas fa-lock mr-1"></i> End-to-end encrypted
+            </p>
+            <p class="footer-text">
+              <i class="fas fa-history mr-1"></i> All messages are logged for audit purposes
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="button-footer">
+    <div class="footer-container">
+      <div class="button-group">
+        <button class="nav-btn prev-btn" onclick="goPrevious()">
+          ← Previous Page
+        </button>
+
+        <button class="nav-btn home-btn" onclick="goHome()">🏠 Home</button>
+
+        <button class="nav-btn next-btn" onclick="goNext()">
+          Next Page →
+        </button>
+      </div>
+
+      <div class="footer-info">
+        
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function goPrevious() {
+      window.location.href = "receipt_generation.html";
+    }
+    function goHome() {
+      window.location.href = "session_management.html";
+    }
+    function goNext() {
+      window.location.href = "audit-logs.html";
+    }
+  </script>
+
+  <script>
+    // State
+    const mentors = [
+      {
+        id: "MT1001",
+        name: "John Doe",
+        avatar: "JD",
+        preview: "Just wanted to clarify my last session payout...",
+        lastMessageTime: "2023-03-20T10:30:00",
+        avatarColor: "blue"
+      },
+      {
+        id: "MT1002",
+        name: "Alice Smith",
+        avatar: "AS",
+        preview: "Thanks for the update!",
+        lastMessageTime: "2023-03-20T09:00:00",
+        avatarColor: "green"
+      },
+      {
+        id: "MT1003",
+        name: "Robert Johnson",
+        avatar: "RJ",
+        preview: "Can we schedule a call about the workshop rates?",
+        lastMessageTime: "2023-03-20T07:00:00",
+        avatarColor: "purple"
+      },
+      {
+        id: "MT1004",
+        name: "Maria Brown",
+        avatar: "MB",
+        preview: "I've sent the session details...",
+        lastMessageTime: "2023-03-19T12:00:00",
+        avatarColor: "yellow"
+      }
+    ];
+
+    const messages = {
+      "MT1001": [
+        {
+          id: "msg1",
+          sender: "mentor",
+          text: "Hello, I haven't received the payment for my March sessions yet. Could you check the status?",
+          time: "2023-03-18T15:42:00"
+        },
+        {
+          id: "msg2",
+          sender: "admin",
+          text: "Hi John, I've checked and it seems there was a delay in processing. I've escalated this and you should receive payment by Wednesday.",
+          time: "2023-03-18T16:15:00"
+        },
+        {
+          id: "msg3",
+          sender: "admin",
+          text: "Hi John, I've reviewed your session from March 15th. The payout has been processed and should reflect in your account within 2-3 business days.",
+          time: "2023-03-20T10:24:00"
+        },
+        {
+          id: "msg4",
+          sender: "mentor",
+          text: "Thanks for the update! Just wanted to clarify my last session payout - was the 1.5 hour workshop included in this payout?",
+          time: "2023-03-20T10:26:00"
+        },
+        {
+          id: "msg5",
+          sender: "admin",
+          text: "Yes, the workshop was included at the special rate of $45/hour as per our agreement. Here's the breakdown:<br><div class='message-details'><p>Regular sessions (3 hrs) @ $30/hr: $90</p><p>Workshop (1.5 hrs) @ $45/hr: $67.50</p><p class='font-medium mt-1'>Total: $157.50</p></div>",
+          time: "2023-03-20T10:28:00"
+        },
+        {
+          id: "msg6",
+          sender: "mentor",
+          text: "Perfect, thanks for the clarification! Everything looks correct now.",
+          time: "2023-03-20T10:30:00"
+        }
+      ],
+      "MT1002": [],
+      "MT1003": [],
+      "MT1004": []
+    };
+
+    let currentMentorId = null;
+
+    // DOM Elements
+    const mentorContainer = document.getElementById("mentor-container");
+    const mentorSearch = document.getElementById("mentor-search");
+    const chatAvatar = document.getElementById("chat-avatar");
+    const chatName = document.getElementById("chat-name");
+    const chatId = document.getElementById("chat-id");
+    const messagesContainer = document.getElementById("messages-container");
+    const messageInput = document.getElementById("message-input");
+    const sendBtn = document.getElementById("send-btn");
+
+    // Initialize
+    document.addEventListener("DOMContentLoaded", () => {
+      renderMentors();
+      setupEventListeners();
+    });
+
+    function setupEventListeners() {
+      // Mentor selection
+      mentorContainer.addEventListener("click", e => {
+        const mentorItem = e.target.closest(".mentor-item");
+        if (mentorItem) {
+          const mentorId = mentorItem.dataset.mentorId;
+          selectMentor(mentorId);
+        }
+      });
+
+      // Search mentors
+      mentorSearch.addEventListener("input", () => {
+        const query = mentorSearch.value.toLowerCase();
+        renderMentors(query);
+      });
+
+      // Send message
+      sendBtn.addEventListener("click", sendMessage);
+      messageInput.addEventListener("keypress", e => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+    }
+
+    function renderMentors(query = "") {
+      mentorContainer.innerHTML = "";
+      const filteredMentors = mentors.filter(mentor =>
+        mentor.name.toLowerCase().includes(query) ||
+        mentor.id.toLowerCase().includes(query)
+      );
+
+      if (filteredMentors.length === 0) {
+        mentorContainer.innerHTML = '<p class="text-center">No mentors found</p>';
+        return;
+      }
+
+      filteredMentors.forEach(mentor => {
+        const mentorItem = document.createElement("div");
+        mentorItem.className = `mentor-item ${currentMentorId === mentor.id ? "active" : ""}`;
+        mentorItem.dataset.mentorId = mentor.id;
+        mentorItem.innerHTML = `
+          <div class="flex items-center">
+            <div class="mentor-avatar bg-${mentor.avatarColor}-200 text-${mentor.avatarColor}-700">${mentor.avatar}</div>
+            <div>
+              <p class="mentor-name">${mentor.name}</p>
+              <p class="mentor-id">Mentor ID: ${mentor.id}</p>
+            </div>
+          </div>
+          <p class="mentor-preview">Last message: ${mentor.preview || "No messages"}</p>
+          <p class="mentor-time">${formatTime(mentor.lastMessageTime)}</p>
+        `;
+        mentorContainer.appendChild(mentorItem);
+      });
+    }
+
+    function selectMentor(mentorId) {
+      currentMentorId = mentorId;
+      const mentor = mentors.find(m => m.id === mentorId);
+      if (!mentor) return;
+
+      // Update chat header
+      chatAvatar.textContent = mentor.avatar;
+      chatAvatar.className = `chat-avatar bg-${mentor.avatarColor}-200 text-${mentor.avatarColor}-700`;
+      chatName.textContent = mentor.name;
+      chatId.textContent = `Mentor ID: ${mentor.id}`;
+      messageInput.disabled = false;
+      sendBtn.disabled = false;
+
+      // Render messages
+      renderMessages(mentorId);
+
+      // Update mentor list active state
+      renderMentors(mentorSearch.value);
+    }
+
+    function renderMessages(mentorId) {
+      messagesContainer.innerHTML = "";
+      const mentorMessages = messages[mentorId] || [];
+
+      if (mentorMessages.length === 0) {
+        messagesContainer.innerHTML = `
+          <div class="date-divider">
+            <div class="date-line"></div>
+            <span class="date-text">No messages yet</span>
+            <div class="date-line"></div>
+          </div>
+        `;
+        return;
+      }
+
+      let lastDate = null;
+      mentorMessages.sort((a, b) => new Date(a.time) - new Date(b.time)).forEach(msg => {
+        const msgDate = new Date(msg.time).toLocaleDateString();
+        if (msgDate !== lastDate) {
+          messagesContainer.innerHTML += `
+            <div class="date-divider">
+              <div class="date-line"></div>
+              <span class="date-text">${formatDate(msg.time)}</span>
+              <div class="date-line"></div>
+            </div>
+          `;
+          lastDate = msgDate;
+        }
+
+        const messageElement = document.createElement("div");
+        messageElement.className = `message message-${msg.sender}`;
+        messageElement.innerHTML = `
+          <p>${msg.text}</p>
+          <p class="message-time">${formatTime(msg.time)}</p>
+        `;
+        messagesContainer.appendChild(messageElement);
+      });
+
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function sendMessage() {
+      const text = messageInput.value.trim();
+      if (!text || !currentMentorId) return;
+
+      const newMessage = {
+        id: "msg" + Date.now(),
+        sender: "admin",
+        text,
+        time: new Date().toISOString()
+      };
+
+      // Add message to in-memory store
+      if (!messages[currentMentorId]) messages[currentMentorId] = [];
+      messages[currentMentorId].push(newMessage);
+
+      // Update mentor preview and last message time
+      const mentor = mentors.find(m => m.id === currentMentorId);
+      mentor.preview = text.slice(0, 50) + (text.length > 50 ? "..." : "");
+      mentor.lastMessageTime = newMessage.time;
+
+      // Re-render messages and mentors
+      renderMessages(currentMentorId);
+      renderMentors(mentorSearch.value);
+
+      // Clear input
+      messageInput.value = "";
+
+      // Simulate mentor reply
+      simulateMentorReply(currentMentorId);
+    }
+
+    function simulateMentorReply(mentorId) {
+      setTimeout(() => {
+        const replies = [
+          "Thanks for the update! Can you confirm the payout date?",
+          "Got it, looks good. Any updates on the next session?",
+          "Can you provide more details about the rates?",
+          "Everything looks correct, thank you!",
+          "I'll follow up if I have more questions."
+        ];
+        const replyText = replies[Math.floor(Math.random() * replies.length)];
+        const replyMessage = {
+          id: "msg" + Date.now(),
+          sender: "mentor",
+          text: replyText,
+          time: new Date().toISOString()
+        };
+
+        // Add reply to in-memory store
+        messages[mentorId].push(replyMessage);
+
+        // Update mentor preview and last message time
+        const mentor = mentors.find(m => m.id === mentorId);
+        mentor.preview = replyText.slice(0, 50) + (replyText.length > 50 ? "..." : "");
+        mentor.lastMessageTime = replyMessage.time;
+
+        // Re-render
+        renderMessages(mentorId);
+        renderMentors(mentorSearch.value);
+      }, 2000);
+    }
+
+    function formatTime(isoString) {
+      if (!isoString) return "Unknown";
+      const date = new Date(isoString);
+      const now = new Date();
+      const diff = (now - date) / 1000; // Difference in seconds
+
+      if (diff < 60) return "Just now";
+      if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
+      if (diff < 86400) return `${Math.floor(diff / 3600)} hour${Math.floor(diff / 3600) > 1 ? "s" : ""} ago`;
+      if (diff < 604800) return `${Math.floor(diff / 86400)} day${Math.floor(diff / 86400) > 1 ? "s" : ""} ago`;
+      return date.toLocaleString([], { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" });
+    }
+
+    function formatDate(isoString) {
+      if (!isoString) return "Unknown";
+      const date = new Date(isoString);
+      const today = new Date();
+      if (date.toDateString() === today.toDateString()) return "Today";
+      const yesterday = new Date(today);
+      yesterday.setDate(today.getDate() - 1);
+      if (date.toDateString() === yesterday.toDateString()) return "Yesterday";
+      return date.toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" });
+    }
+
+    function logout() {
+      console.log("Logging out...");
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
